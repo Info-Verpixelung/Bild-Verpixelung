@@ -16,37 +16,46 @@
     <div class="container">
         <header>
             <h1>Secure Image Anonymizer</h1>
-            <p>Laden Sie ein Bild hoch, um Gesichter sicher und irreversibel zu anonymisieren.</p>
+            <p>Laden Sie Bilder hoch, um bestimmte Bereiche sicher und irreversibel zu anonymisieren.</p>
         </header>
         <main>
             <div class="upload-section">
-                <h2>Bild hochladen</h2>
+                <h2>Bilder hochladen</h2>
                 <div class="drop-zone">
-                    <p>Ziehen Sie Ihr Bild hierher oder klicken Sie, um es auszuwählen.</p>
-                    <input type="file" id="file-input" accept="image/*">
+                    <p>Ziehen Sie Ihre Bilder hierher oder klicken Sie, um sie auszuwählen (maximal 10).</p>
+                    <input type="file" id="file-input" accept="image/*" multiple>
                 </div>
             </div>
             <div class="preview-section">
                 <h2>Vorschau</h2>
-                <div class="image-preview" id="image-preview-container">
-                    <img src="" alt="Bildvorschau" class="image-preview-image" id="image-preview">
-                    <span class="image-preview-text">Hier wird Ihre Bildvorschau angezeigt.</span>
+                <div class="image-preview-grid" id="image-preview-grid">
+                    <span class="image-preview-text">Hier werden Ihre Bildvorschauen angezeigt.</span>
                 </div>
             </div>
-            <div class="controls-section">
-                <h2>Anonymisierungsart</h2>
-                <select id="anonymization-type">
-                    <option value="pixelate">Verpixeln</option>
-                    <option value="blur">Weichzeichnen</option>
-                    <option value="blacken">Schwärzen</option>
-                </select>
-                <button id="process-button">Bild verarbeiten</button>
+            <div class="settings-section">
+                <h2>Einstellungen</h2>
+                <div class="control-group">
+                    <h3>Anonymisierungsart</h3>
+                    <select id="anonymization-type">
+                        <option value="pixelate">Verpixeln</option>
+                        <option value="blur">Weichzeichnen</option>
+                        <option value="blacken">Schwärzen</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <h3>Was soll zensiert werden?</h3>
+                    <select id="censorship-subject">
+                        <option value="faces">Gesichter</option>
+                        <option value="eyes">Nur Augen (Balken)</option>
+                        <option value="body">Ganzer Körper</option>
+                    </select>
+                </div>
+                <button id="process-button">Bilder verarbeiten</button>
             </div>
             <div class="output-section">
-                <h2>Anonymisiertes Bild</h2>
-                <div class="image-preview" id="output-preview-container">
-                    <img src="" alt="Ausgabevorschau" class="image-preview-image" id="output-preview">
-                    <span class="image-preview-text">Hier wird Ihr anonymisiertes Bild angezeigt.</span>
+                <h2>Anonymisierte Bilder</h2>
+                <div class="image-preview-grid" id="output-preview-grid">
+                    <span class="image-preview-text">Hier werden Ihre anonymisierten Bilder angezeigt.</span>
                 </div>
                 <button id="download-button" disabled>Herunterladen</button>
             </div>
