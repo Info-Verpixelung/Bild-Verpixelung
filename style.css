@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: "Roboto", sans-serif;
     background-color: #f4f7f6;
     color: #333;
     margin: 0;
@@ -114,8 +114,8 @@ h2 {
     min-height: 200px;
     padding: 10px;
     background-color: #f4f7f6;
-    align-items: center; /* Vertically center items when there's only text */
-    justify-content: center; /* Horizontally center items when there's only text */
+    align-items: center; /* Vertically center items when there’s only text */
+    justify-content: center; /* Horizontally center items when there’s only text */
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -125,6 +125,7 @@ h2 {
 }
 
 .image-preview-item {
+    position: relative; /* Needed for absolute positioning of delete button */
     width: 150px; /* Fixed width for each preview item */
     height: 100px; /* Fixed height for each preview item */
     border: 1px solid #ccc;
@@ -146,6 +147,28 @@ h2 {
     max-height: 100%;
     display: block;
     object-fit: contain; /* Ensure the image fits within the item without cropping */
+}
+
+.delete-image-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #ff4d4d; /* Red color for delete */
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.delete-image-button:hover {
+    background-color: #cc0000;
 }
 
 .image-preview-text {
@@ -236,6 +259,8 @@ footer {
     position: absolute;
     top: 20px;
     right: 20px;
+    display: flex;
+    align-items: center;
 }
 
 .theme-switch {
@@ -260,35 +285,59 @@ footer {
     bottom: 0;
     background-color: #ccc;
     transition: .4s;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-}
-
-input:checked + .slider {
-    background-color: #00a896;
-}
-
-input:focus + .slider {
-    box-shadow: 0 0 1px #00a896;
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
-}
-
-.slider.round {
     border-radius: 34px;
+    /* overflow: hidden; Removed, as knob is now inside */
 }
 
-.slider.round:before {
+/* Remove old slider:before as knob */
+/* .slider:before { ... } */
+
+.slider-knob {
+    position: absolute;
+    top: 4px;
+    left: 4px; /* Initial position */
+    width: 26px;
+    height: 26px;
+    background-color: white;
     border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.4s ease; /* Animate knob movement */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+input:checked + .slider .slider-knob {
+    transform: translateX(26px); /* Move knob to the right */
+}
+
+.slider-knob .theme-icon {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    /* Centering within the knob */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.4s ease; /* Animate icon fade */
+}
+
+#light-mode-icon {
+    opacity: 1; /* Visible in light mode */
+}
+
+#dark-mode-icon {
+    opacity: 0; /* Hidden in light mode */
+}
+
+input:checked + .slider .slider-knob #light-mode-icon {
+    opacity: 0; /* Hidden in dark mode */
+}
+
+input:checked + .slider .slider-knob #dark-mode-icon {
+    opacity: 1; /* Visible in dark mode */
+}
+
+/* Remove old icon and text styling that were outside the slider */
+/* .theme-icon { ... } */
+/* #theme-status-text { ... } */
