@@ -9,4 +9,5 @@
  - [ ] 7. local storage error (DOMException) lösen, tritt ab dem zweiten bild auf
  - [ ] 8. Vorschau für hochgeladene/anonymisierte Bilder (in groß) bei mehreren Bildern durchklickbar
  - [ ] 9. Button zum löschen aller hochgeladener Bilder mit einem Click
+ - [ ] 10. Drag and drop visuell ansprechbar machen (low prio)
  - [ ] (Für später): **Input validation von bildern** (sicherheitslücken vermeiden, anti memory-ressource exhaustion, prüfen dass auch wirklich **BILDER** hochgeladen wurden, upload Größe beschränken menge und größe der bilder insgesamt) **FALLS** das Projekt als website gehostet wird, extrem wichtig und potentiell angreifbar (gilt für alle requests außer "GET" aber *im Fall vom hosten Pentest unvermeidbar*)
