@@ -58,6 +58,17 @@ header p {
     margin-bottom: 30px;
 }
 
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.section-header h2 {
+    margin-bottom: 0;
+}
+
 h2 {
     color: #005f73;
     border-bottom: 2px solid #e0e0e0;
@@ -214,6 +225,40 @@ button:hover {
 button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+.delete-all-button {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.delete-all-button.visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.delete-all-button:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+}
+
+.delete-all-icon {
+    font-size: 16px;
+}
+
+.delete-all-text {
+    font-weight: 500;
 }
 
 .dark-mode button:disabled {

@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const downloadButton = document.getElementById("download-button");
     const outputPreviewGrid = document.getElementById("output-preview-grid");
     const outputPreviewText = document.querySelector("#output-preview-grid .image-preview-text");
+    const deleteAllButton = document.getElementById("delete-all-button");
 
     let uploadedFiles = []; // To store the files (as {name, type, dataURL} objects) for processing
     let localStorageAvailable = true; // Track if localStorage is working
@@ -202,7 +203,41 @@ document.addEventListener("DOMContentLoaded", () => {
         // Update visibility based on actual content of the grids
         imagePreviewText.style.display = imagePreviewGrid.querySelectorAll(".image-preview-item").length === 0 ? "block" : "none";
         outputPreviewText.style.display = outputPreviewGrid.querySelectorAll(".image-preview-item").length === 0 ? "block" : "none";
+        
+        // Update delete-all button visibility
+        updateDeleteAllButtonVisibility();
     }
+
+    function updateDeleteAllButtonVisibility() {
+        if (uploadedFiles.length > 0) {
+            deleteAllButton.classList.add("visible");
+        } else {
+            deleteAllButton.classList.remove("visible");
+        }
+    }
+
+    // Delete all images handler
+    deleteAllButton.addEventListener("click", () => {
+        if (uploadedFiles.length === 0) {
+            return;
+        }
+
+        const confirmDelete = confirm(`Möchten Sie wirklich alle ${uploadedFiles.length} Bild${uploadedFiles.length > 1 ? 'er' : ''} löschen?`);
+        
+        if (confirmDelete) {
+            uploadedFiles = [];
+            saveImagesToLocalStorage();
+            refreshImagePreviews();
+            
+            // Clear output preview
+            Array.from(outputPreviewGrid.children).forEach(child => {
+                if (child.classList.contains("image-preview-item")) {
+                    outputPreviewGrid.removeChild(child);
+                }
+            });
+            downloadButton.disabled = true;
+        }
+    });
 
     processButton.addEventListener("click", () => {
         if (uploadedFiles.length > 0) {

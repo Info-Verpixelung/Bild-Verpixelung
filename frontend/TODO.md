@@ -8,7 +8,7 @@
  - [x] 6. Hochgeladene Bilder sollten nicht verschwinden bei reload -> verursacht höchstwahrscheinlich den local storage error, kümmer ich mich später drum
  - [x] 7. local storage error (DOMException) lösen, tritt ab dem zweiten bild auf PS: Nicht wirklich vermeidbar local browser storage hat ca. 5-10mb platz, nur teilweise gelöst aber anders nicht möglich aktuell
  - [ ] 8. Vorschau für hochgeladene/anonymisierte Bilder (in groß) bei mehreren Bildern durchklickbar
- - [ ] 9. Button zum löschen aller hochgeladener Bilder mit einem Click
+ - [x] 9. Button zum löschen aller hochgeladener Bilder mit einem Click + Nach bestätigung fragen
  - [ ] 10. Drag and drop visuell ansprechbar machen (low prio)
  - [x] 11. Favicon error fixen, nicht extrem wichtig aber clean
  - [x] 12. Drag and drop funktioniert überall **außer** auf der upload fläche **UNBEDINGT FIXEN!**
