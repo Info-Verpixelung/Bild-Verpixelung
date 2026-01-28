@@ -7,4 +7,5 @@
  - [x] 5. Unfassbar nerviger bug (Text in den vorschau feldern verschwindet und kommt nicht wieder) fixen
  - [x] 6. Hochgeladene Bilder sollten nicht verschwinden bei reload -> verursacht höchstwahrscheinlich den local storage error, kümmer ich mich später drum
  - [ ] 7. local storage error (DOMException) lösen, tritt ab dem zweiten bild auf
+ - [ ] 8. Vorschau für hochgeladene/anonymisierte Bilder (in groß) bei mehreren Bildern durchklickbar
  - [ ] (Für später): **Input validation von bildern** (sicherheitslücken vermeiden, anti memory-ressource exhaustion, prüfen dass auch wirklich **BILDER** hochgeladen wurden, upload Größe beschränken menge und größe der bilder insgesamt) **FALLS** das Projekt als website gehostet wird, extrem wichtig und potentiell angreifbar (gilt für alle requests außer "GET" aber *im Fall vom hosten Pentest unvermeidbar*)
