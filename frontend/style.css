@@ -54,7 +54,7 @@ header p {
     color: #bbb;
 }
 
-.upload-section, .preview-section, .settings-section, .output-section {
+.upload-section, .preview-section, .output-section {
     margin-bottom: 30px;
 }
 
@@ -263,11 +263,8 @@ button:disabled {
     margin-top: 20px;
 }
 
-.settings-section {
-    margin-bottom: 30px;
-}
-
 .control-group {
+    margin-top: 20px;
     margin-bottom: 20px;
 }
 
@@ -280,8 +277,17 @@ button:disabled {
     color: #00a896;
 }
 
-.settings-section button {
-    width: auto;
+.preview-button {
+    width: 100%;
+    margin-top: 15px;
+    background-color: #00a896;
+    color: #fff;
+    padding: 12px 20px;
+    font-size: 16px;
+}
+
+.preview-button:hover {
+    background-color: #007a6e;
 }
 
 footer {

@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const themeSwitch = document.getElementById("checkbox");
     const anonymizationTypeSelect = document.getElementById("anonymization-type");
     const censorshipSubjectSelect = document.getElementById("censorship-subject");
+    const previewButton = document.getElementById("preview-button");
     const processButton = document.getElementById("process-button");
     const downloadButton = document.getElementById("download-button");
     const outputPreviewGrid = document.getElementById("output-preview-grid");

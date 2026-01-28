@@ -48,9 +48,21 @@
                 <div class="image-preview-grid" id="image-preview-grid">
                     <span class="image-preview-text">Hier werden Ihre Bildvorschauen angezeigt.</span>
                 </div>
+                <div class="control-group">
+                    <h3>Was soll erkannt werden?</h3>
+                    <select id="censorship-subject">
+                        <option value="faces">Gesichter</option>
+                        <option value="eyes">Nur Augen (Balken)</option>
+                        <option value="body">Ganzer Körper</option>
+                    </select>
+                </div>
+                <button id="preview-button" class="preview-button">Bilder verarbeiten (Preview)</button>
             </div>
-            <div class="settings-section">
-                <h2>Einstellungen</h2>
+            <div class="output-section">
+                <h2>Anonymisierte Bilder</h2>
+                <div class="image-preview-grid" id="output-preview-grid">
+                    <span class="image-preview-text">Hier werden Ihre anonymisierten Bilder angezeigt.</span>
+                </div>
                 <div class="control-group">
                     <h3>Anonymisierungsart</h3>
                     <select id="anonymization-type">
@@ -59,21 +71,7 @@
                         <option value="blacken">Schwärzen</option>
                     </select>
                 </div>
-                <div class="control-group">
-                    <h3>Was soll zensiert werden?</h3>
-                    <select id="censorship-subject">
-                        <option value="faces">Gesichter</option>
-                        <option value="eyes">Nur Augen (Balken)</option>
-                        <option value="body">Ganzer Körper</option>
-                    </select>
-                </div>
-                <button id="process-button">Bilder verarbeiten</button>
-            </div>
-            <div class="output-section">
-                <h2>Anonymisierte Bilder</h2>
-                <div class="image-preview-grid" id="output-preview-grid">
-                    <span class="image-preview-text">Hier werden Ihre anonymisierten Bilder angezeigt.</span>
-                </div>
+                <button id="process-button" disabled>Bilder verarbeiten</button>
                 <button id="download-button" disabled>Herunterladen</button>
             </div>
         </main>
