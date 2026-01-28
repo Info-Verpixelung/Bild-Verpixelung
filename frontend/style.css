@@ -386,3 +386,70 @@ input:checked + .slider .slider-knob #dark-mode-icon {
 /* Remove old icon and text styling that were outside the slider */
 /* .theme-icon { ... } */
 /* #theme-status-text { ... } */
+
+/* Drag and Drop Overlay */
+.drag-drop-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    pointer-events: none;
+}
+
+.dark-mode .drag-drop-overlay {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.drag-drop-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.drag-drop-content {
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.drag-drop-overlay.active .drag-drop-content {
+    transform: scale(1);
+}
+
+.drag-drop-icon {
+    font-size: 120px;
+    margin-bottom: 20px;
+    animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.drag-drop-text {
+    font-size: 48px;
+    font-weight: bold;
+    color: #00a896;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0, 168, 150, 0.5);
+}
+
+.drag-drop-subtext {
+    font-size: 24px;
+    color: #fff;
+    opacity: 0.8;
+}

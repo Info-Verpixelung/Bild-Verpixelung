@@ -11,10 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const outputPreviewGrid = document.getElementById("output-preview-grid");
     const outputPreviewText = document.querySelector("#output-preview-grid .image-preview-text");
     const deleteAllButton = document.getElementById("delete-all-button");
+    const dragDropOverlay = document.getElementById("drag-drop-overlay");
 
     let uploadedFiles = []; // To store the files (as {name, type, dataURL} objects) for processing
     let localStorageAvailable = true; // Track if localStorage is working
     let userWarnedAboutStorage = false; // Only warn once per session
+    let dragCounter = 0; // Track drag enter/leave to handle nested elements
 
     // Local storage functions
     function saveImagesToLocalStorage() {
@@ -98,7 +100,29 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         e.stopPropagation();
         dropZone.style.backgroundColor = document.body.classList.contains("dark-mode") ? "#3a3a3a" : "#edf6f9";
+        
+        // Hide overlay on drop
+        dragCounter = 0;
+        dragDropOverlay.classList.remove("active");
+        
         handleFiles(e.dataTransfer.files);
+    });
+
+    // Drag and drop overlay visual feedback
+    document.body.addEventListener("dragenter", (e) => {
+        e.preventDefault();
+        dragCounter++;
+        if (dragCounter === 1) {
+            dragDropOverlay.classList.add("active");
+        }
+    });
+
+    document.body.addEventListener("dragleave", (e) => {
+        e.preventDefault();
+        dragCounter--;
+        if (dragCounter === 0) {
+            dragDropOverlay.classList.remove("active");
+        }
     });
 
     // Global drag and drop for the entire website (except drop-zone, handled above)
@@ -108,6 +132,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.body.addEventListener("drop", (e) => {
         e.preventDefault();
+        // Hide overlay on drop
+        dragCounter = 0;
+        dragDropOverlay.classList.remove("active");
+        
         // Only handle if NOT dropped on drop-zone (drop-zone has its own handler)
         if (!e.target.closest(".drop-zone")) {
             handleFiles(e.dataTransfer.files);
