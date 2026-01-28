@@ -6,7 +6,7 @@
  - [x] 4. Bilder werden hochgeladen egal wohin man sie zieht auf der Seite
  - [x] 5. Unfassbar nerviger bug (Text in den vorschau feldern verschwindet und kommt nicht wieder) fixen
  - [x] 6. Hochgeladene Bilder sollten nicht verschwinden bei reload -> verursacht höchstwahrscheinlich den local storage error, kümmer ich mich später drum
- - [ ] 7. local storage error (DOMException) lösen, tritt ab dem zweiten bild auf
+ - [x] 7. local storage error (DOMException) lösen, tritt ab dem zweiten bild auf PS: Nicht wirklich vermeidbar local browser storage hat ca. 5-10mb platz, nur teilweise gelöst aber anders nicht möglich aktuell
  - [ ] 8. Vorschau für hochgeladene/anonymisierte Bilder (in groß) bei mehreren Bildern durchklickbar
  - [ ] 9. Button zum löschen aller hochgeladener Bilder mit einem Click
  - [ ] 10. Drag and drop visuell ansprechbar machen (low prio)

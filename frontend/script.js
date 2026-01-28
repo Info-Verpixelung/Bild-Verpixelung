@@ -12,13 +12,42 @@ document.addEventListener("DOMContentLoaded", () => {
     const outputPreviewText = document.querySelector("#output-preview-grid .image-preview-text");
 
     let uploadedFiles = []; // To store the files (as {name, type, dataURL} objects) for processing
+    let localStorageAvailable = true; // Track if localStorage is working
+    let userWarnedAboutStorage = false; // Only warn once per session
 
     // Local storage functions
     function saveImagesToLocalStorage() {
+        if (!localStorageAvailable) {
+            return; // Skip saving if localStorage is full/unavailable
+        }
+
         try {
-            localStorage.setItem("uploadedImages", JSON.stringify(uploadedFiles));
+            const dataToSave = JSON.stringify(uploadedFiles);
+            localStorage.setItem("uploadedImages", dataToSave);
         } catch (e) {
             console.error("Error saving to local storage:", e);
+            
+            // Check if it's a quota exceeded error
+            if (e.name === 'QuotaExceededError' || e.code === 22) {
+                localStorageAvailable = false;
+                
+                // Warn user once
+                if (!userWarnedAboutStorage) {
+                    userWarnedAboutStorage = true;
+                    alert("Warnung: Der Browser-Speicher ist voll. Ihre Bilder bleiben nur für diese Sitzung erhalten und gehen beim Neuladen verloren.\n\nTipp: Verarbeiten Sie die aktuellen Bilder und laden Sie dann neue hoch.");
+                }
+                
+                // Try to clear old data to make room
+                try {
+                    localStorage.removeItem("uploadedImages");
+                    // Try saving again with current files
+                    localStorage.setItem("uploadedImages", JSON.stringify(uploadedFiles));
+                    localStorageAvailable = true;
+                    console.log("Successfully cleared old data and saved new images");
+                } catch (retryError) {
+                    console.error("Could not save even after clearing:", retryError);
+                }
+            }
         }
     }
 
@@ -32,6 +61,12 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (e) {
             console.error("Error loading from local storage:", e);
             uploadedFiles = []; // Clear corrupted data
+            // Try to clear corrupted data
+            try {
+                localStorage.removeItem("uploadedImages");
+            } catch (clearError) {
+                console.error("Could not clear corrupted data:", clearError);
+            }
         }
         // updatePlaceholderVisibility(); // Not needed here anymore
     }
