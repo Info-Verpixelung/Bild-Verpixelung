@@ -14,72 +14,140 @@ document.addEventListener("DOMContentLoaded", () => {
     const dragDropOverlay = document.getElementById("drag-drop-overlay");
 
     let uploadedFiles = []; // To store the files (as {name, type, dataURL} objects) for processing
-    let localStorageAvailable = true; // Track if localStorage is working
+    let dbAvailable = true; // Track if IndexedDB is working
     let userWarnedAboutStorage = false; // Only warn once per session
     let dragCounter = 0; // Track drag enter/leave to handle nested elements
+    let db = null; // IndexedDB reference
 
-    // Local storage functions
-    function saveImagesToLocalStorage() {
-        if (!localStorageAvailable) {
-            return; // Skip saving if localStorage is full/unavailable
-        }
-
-        try {
-            const dataToSave = JSON.stringify(uploadedFiles);
-            localStorage.setItem("uploadedImages", dataToSave);
-        } catch (e) {
-            console.error("Error saving to local storage:", e);
+    // IndexedDB setup
+    function initIndexedDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open("ImageAnonymizer", 1);
             
-            // Check if it's a quota exceeded error
-            if (e.name === 'QuotaExceededError' || e.code === 22) {
-                localStorageAvailable = false;
-                
-                // Warn user once
-                if (!userWarnedAboutStorage) {
-                    userWarnedAboutStorage = true;
-                    alert("Warnung: Der Browser-Speicher ist voll. Ihre Bilder bleiben nur für diese Sitzung erhalten und gehen beim Neuladen verloren.\n\nTipp: Verarbeiten Sie die aktuellen Bilder und laden Sie dann neue hoch.");
+            request.onerror = () => {
+                console.error("IndexedDB initialization failed:", request.error);
+                dbAvailable = false;
+                reject(request.error);
+            };
+            
+            request.onsuccess = () => {
+                db = request.result;
+                console.log("IndexedDB initialized successfully");
+                resolve(db);
+            };
+            
+            request.onupgradeneeded = (event) => {
+                const database = event.target.result;
+                // Create object store if it doesn't exist
+                if (!database.objectStoreNames.contains("uploadedImages")) {
+                    // Don't use keyPath, let us manage the array structure ourselves
+                    database.createObjectStore("uploadedImages");
+                    console.log("Object store created");
                 }
-                
-                // Try to clear old data to make room
-                try {
-                    localStorage.removeItem("uploadedImages");
-                    // Try saving again with current files
-                    localStorage.setItem("uploadedImages", JSON.stringify(uploadedFiles));
-                    localStorageAvailable = true;
-                    console.log("Successfully cleared old data and saved new images");
-                } catch (retryError) {
-                    console.error("Could not save even after clearing:", retryError);
-                }
-            }
-        }
+            };
+        });
     }
 
-    function loadImagesFromLocalStorage() {
-        try {
-            const savedImages = localStorage.getItem("uploadedImages");
-            if (savedImages) {
-                uploadedFiles = JSON.parse(savedImages);
-                refreshImagePreviews(); // Display loaded images and update visibility
-            }
-        } catch (e) {
-            console.error("Error loading from local storage:", e);
-            uploadedFiles = []; // Clear corrupted data
-            // Try to clear corrupted data
+    // IndexedDB functions
+    function saveImagesToIndexedDB() {
+        if (!dbAvailable || !db) {
+            return Promise.resolve(); // Skip if DB unavailable
+        }
+
+        return new Promise((resolve) => {
             try {
-                localStorage.removeItem("uploadedImages");
-            } catch (clearError) {
-                console.error("Could not clear corrupted data:", clearError);
+                const transaction = db.transaction(["uploadedImages"], "readwrite");
+                const store = transaction.objectStore("uploadedImages");
+                
+                // Clear old data first
+                const clearRequest = store.clear();
+                
+                clearRequest.onsuccess = () => {
+                    // Store the entire array as a single object with key "images"
+                    const putRequest = store.put(uploadedFiles, "images");
+                    
+                    putRequest.onerror = () => {
+                        console.error("Put error:", putRequest.error);
+                        
+                        // Check if it's a quota exceeded error
+                        if (putRequest.error && putRequest.error.name === 'QuotaExceededError') {
+                            dbAvailable = false;
+                            
+                            // Warn user once
+                            if (!userWarnedAboutStorage) {
+                                userWarnedAboutStorage = true;
+                                alert("Warnung: Der Browser-Speicher ist voll. Ihre Bilder bleiben nur für diese Sitzung erhalten und gehen beim Neuladen verloren.\n\nTipp: Verarbeiten Sie die aktuellen Bilder und laden Sie dann neue hoch.");
+                            }
+                        }
+                    };
+                };
+                
+                transaction.onerror = () => {
+                    console.error("Transaction error:", transaction.error);
+                    resolve();
+                };
+                
+                transaction.oncomplete = () => {
+                    console.log(`Images saved to IndexedDB (${uploadedFiles.length} files)`);
+                    resolve();
+                };
+            } catch (e) {
+                console.error("Error saving to IndexedDB:", e);
+                dbAvailable = false;
+                resolve();
             }
-        }
-        // updatePlaceholderVisibility(); // Not needed here anymore
+        });
     }
 
-    // Initial load from local storage
-    loadImagesFromLocalStorage();
+    function loadImagesFromIndexedDB() {
+        return new Promise((resolve) => {
+            if (!dbAvailable || !db) {
+                resolve();
+                return;
+            }
 
-    // Set dark mode as default
-    document.body.classList.add("dark-mode");
-    themeSwitch.checked = true;
+            try {
+                const transaction = db.transaction(["uploadedImages"], "readonly");
+                const store = transaction.objectStore("uploadedImages");
+                const request = store.get("images");
+                
+                request.onsuccess = () => {
+                    const data = request.result;
+                    if (data && Array.isArray(data) && data.length > 0) {
+                        uploadedFiles = data;
+                        refreshImagePreviews(); // Display loaded images and update visibility
+                        console.log(`Loaded ${uploadedFiles.length} images from IndexedDB`);
+                    }
+                    resolve();
+                };
+                
+                request.onerror = () => {
+                    console.error("Error loading from IndexedDB:", request.error);
+                    resolve();
+                };
+            } catch (e) {
+                console.error("Error loading from IndexedDB:", e);
+                resolve();
+            }
+        });
+    }
+
+    // Initialize IndexedDB and load images
+    initIndexedDB()
+        .then(() => loadImagesFromIndexedDB())
+        .catch((err) => {
+            console.error("Failed to initialize IndexedDB, using session-only mode:", err);
+            dbAvailable = false;
+        })
+        .then(() => {
+            // Set dark mode as default (after DB initialized)
+            document.body.classList.add("dark-mode");
+            themeSwitch.checked = true;
+            console.log("App initialized successfully");
+        });
+
+    // For compatibility, use IndexedDB save instead of localStorage
+    const saveImagesToLocalStorage = saveImagesToIndexedDB;
 
     themeSwitch.addEventListener("change", () => {
         document.body.classList.toggle("dark-mode");
@@ -168,7 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 uploadedFiles.push({ name: file.name, type: file.type, dataURL: e.target.result });
-                saveImagesToLocalStorage(); // Save after each new file is read
+                saveImagesToLocalStorage().catch(err => console.error("Error saving image:", err)); // Save after each new file is read
                 refreshImagePreviews(); // Re-render all previews after adding a new one
             };
             reader.readAsDataURL(file);
@@ -203,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function removeImagePreview(index) {
         uploadedFiles.splice(index, 1); // Remove file from array
-        saveImagesToLocalStorage(); // Save after removal
+        saveImagesToLocalStorage().catch(err => console.error("Error saving after removal:", err)); // Save after removal
         refreshImagePreviews(); // Re-render previews to update indices and display
         // outputPreviewGrid.innerHTML = ""; // Not needed here anymore as refreshPreviews handles it
         downloadButton.disabled = true;
@@ -254,7 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         if (confirmDelete) {
             uploadedFiles = [];
-            saveImagesToLocalStorage();
+            saveImagesToLocalStorage().catch(err => console.error("Error clearing images:", err));
             refreshImagePreviews();
             
             // Clear output preview
