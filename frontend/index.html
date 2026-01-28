@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Image Anonymizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode">
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round">
+                <div class="slider-knob">
+                    <img src="icons/sun.png" alt="Light Mode Icon" id="light-mode-icon" class="theme-icon">
+                    <img src="icons/moon.png" alt="Dark Mode Icon" id="dark-mode-icon" class="theme-icon">
+                </div>
+            </div>
+        </label>
+    </div>
+    <div class="container">
+        <header>
+            <h1>Secure Image Anonymizer</h1>
+            <p>Laden Sie Bilder hoch, um bestimmte Bereiche sicher und irreversibel zu anonymisieren.</p>
+        </header>
+        <main>
+            <div class="upload-section">
+                <h2>Bilder hochladen</h2>
+                <div class="drop-zone">
+                    <p>Ziehen Sie Ihre Bilder hierher oder klicken Sie, um sie auszuwählen (maximal 10).</p>
+                    <input type="file" id="file-input" accept="image/*" multiple>
+                </div>
+            </div>
+            <div class="preview-section">
+                <h2>Vorschau</h2>
+                <div class="image-preview-grid" id="image-preview-grid">
+                    <span class="image-preview-text">Hier werden Ihre Bildvorschauen angezeigt.</span>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h2>Einstellungen</h2>
+                <div class="control-group">
+                    <h3>Anonymisierungsart</h3>
+                    <select id="anonymization-type">
+                        <option value="pixelate">Verpixeln</option>
+                        <option value="blur">Weichzeichnen</option>
+                        <option value="blacken">Schwärzen</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <h3>Was soll zensiert werden?</h3>
+                    <select id="censorship-subject">
+                        <option value="faces">Gesichter</option>
+                        <option value="eyes">Nur Augen (Balken)</option>
+                        <option value="body">Ganzer Körper</option>
+                    </select>
+                </div>
+                <button id="process-button">Bilder verarbeiten</button>
+            </div>
+            <div class="output-section">
+                <h2>Anonymisierte Bilder</h2>
+                <div class="image-preview-grid" id="output-preview-grid">
+                    <span class="image-preview-text">Hier werden Ihre anonymisierten Bilder angezeigt.</span>
+                </div>
+                <button id="download-button" disabled>Herunterladen</button>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
