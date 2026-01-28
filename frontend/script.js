@@ -52,18 +52,30 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.click();
     });
 
-    // Global drag and drop for the entire website
+    // Drop zone specific drag and drop handlers
+    dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.backgroundColor = document.body.classList.contains("dark-mode") ? "#3a3a3a" : "#edf6f9";
+        handleFiles(e.dataTransfer.files);
+    });
+
+    // Global drag and drop for the entire website (except drop-zone, handled above)
     document.body.addEventListener("dragover", (e) => {
         e.preventDefault(); // Prevent default to allow drop
     });
 
     document.body.addEventListener("drop", (e) => {
         e.preventDefault();
-        if (e.target.closest(".drop-zone")) {
-            dropZone.style.backgroundColor = document.body.classList.contains("dark-mode") ? "#3a3a3a" : "#edf6f9";
-            return;
+        // Only handle if NOT dropped on drop-zone (drop-zone has its own handler)
+        if (!e.target.closest(".drop-zone")) {
+            handleFiles(e.dataTransfer.files);
         }
-        handleFiles(e.dataTransfer.files);
     });
 
     // Click to upload in empty preview area
