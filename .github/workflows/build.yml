@@ -1,0 +1,31 @@
+name: Build-EXE
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout-repo-content
+        uses: actions/checkout@v4 # checkout the repository content to github runner.
+      - name: setup miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniconda-version: "latest"
+          python-version: 3.10.15 #install the python needed
+          auto-update-conda: true
+          active-environmennt: myenv
+          environment-file: backend/environment.yml
+          use-mamba: true
+      - name: Verify conda
+        shell: bash -l {0}
+        run: |
+          conda info
+          python --version
+      - run: cd backend
+      - run: pyinstaller --onefile -w 'app.py'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: my-artifact
+          path: backend/dist/app.exe
