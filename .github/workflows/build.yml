@@ -23,8 +23,7 @@ jobs:
         run: |
           conda info
           python --version
-      - run: cd backend
-      - run: pyinstaller --onefile -w 'app.py'
+      - run: cd backend && pyinstaller --onefile -w 'app.py'
       - uses: actions/upload-artifact@v4
         with:
           name: my-artifact
