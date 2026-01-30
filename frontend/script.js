@@ -258,6 +258,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const img = document.createElement("img");
         img.src = imageObj.dataURL;
         img.alt = "Bildvorschau";
+        img.style.cursor = "pointer";
+        img.title = "Klicken für große Ansicht";
+        
+        // Click handler for lightbox
+        img.addEventListener("click", () => {
+            openLightbox(index);
+        });
 
         const deleteButton = document.createElement("span");
         deleteButton.classList.add("delete-image-button");
@@ -414,6 +421,72 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 400);
     }
 
+    // Draw detection boxes on canvas and return new image DataURL
+    function drawDetectionsOnImage(imageDataURL, detections) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+                // Create canvas with same dimensions as image
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                const ctx = canvas.getContext('2d');
+                
+                // Draw original image on canvas
+                ctx.drawImage(img, 0, 0);
+                
+                // Draw detection boxes
+                ctx.strokeStyle = '#00ff00'; // Bright green
+                ctx.lineWidth = 3;
+                ctx.font = 'bold 16px Arial';
+                ctx.fillStyle = '#00ff00';
+                
+                if (detections && detections.length > 0) {
+                    detections.forEach((detection) => {
+                        // x, y sind der Mittelpunkt, w, h sind Breite/Höhe
+                        const x = detection.x;
+                        const y = detection.y;
+                        const w = detection.w;
+                        const h = detection.h;
+                        
+                        // Berechne linke obere Ecke
+                        const rectX = x - w / 2;
+                        const rectY = y - h / 2;
+                        
+                        // Zeichne Rechteck
+                        ctx.strokeRect(rectX, rectY, w, h);
+                        
+                        // Zeichne Type-Label oben auf der Box
+                        if (detection.type) {
+                            const labelText = detection.type;
+                            const textMetrics = ctx.measureText(labelText);
+                            const textWidth = textMetrics.width;
+                            
+                            // Background für Text
+                            ctx.fillStyle = '#00ff00';
+                            ctx.fillRect(
+                                rectX, 
+                                rectY - 25, 
+                                textWidth + 8, 
+                                20
+                            );
+                            
+                            // Text selbst
+                            ctx.fillStyle = '#000000';
+                            ctx.fillText(labelText, rectX + 4, rectY - 8);
+                        }
+                    });
+                }
+                
+                // Convert canvas to DataURL
+                const newImageDataURL = canvas.toDataURL();
+                resolve(newImageDataURL);
+            };
+            img.src = imageDataURL;
+        });
+    }
+
     function updateDeleteAllButtonVisibility() {
         if (uploadedFiles.length > 0) {
             deleteAllButton.classList.add("visible");
@@ -471,6 +544,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const data = await response.json();
                 console.log(`Preview response for image ${index + 1}:`, data);
+
+                // Draw detections on image and update preview
+                if (data.objects && data.objects.length > 0) {
+                    const imageWithDetections = await drawDetectionsOnImage(
+                        imageObj.dataURL,
+                        data.objects
+                    );
+                    
+                    // Update the preview image with detections
+                    if (previewElement) {
+                        const imgElement = previewElement.querySelector('img');
+                        if (imgElement) {
+                            imgElement.src = imageWithDetections;
+                        }
+                    }
+                    
+                    // Store the detection image in memory for later use
+                    imageObj.previewImage = imageWithDetections;
+                    imageObj.detections = data.objects;
+                }
 
                 // Complete loading animation
                 if (previewElement) {
@@ -547,4 +640,82 @@ document.addEventListener("DOMContentLoaded", () => {
     //     imagePreviewText.style.display = "block";
     //     outputPreviewText.style.display = "block";
     // }
+
+    // ============================================
+    // LIGHTBOX FUNCTIONALITY
+    // ============================================
+    
+    const lightboxModal = document.getElementById("lightbox-modal");
+    const lightboxImage = document.getElementById("lightbox-image");
+    const lightboxClose = document.getElementById("lightbox-close");
+    const lightboxPrev = document.getElementById("lightbox-prev");
+    const lightboxNext = document.getElementById("lightbox-next");
+    const lightboxCounter = document.getElementById("lightbox-counter");
+    
+    let currentLightboxIndex = 0;
+    
+    function openLightbox(index) {
+        if (uploadedFiles.length === 0) return;
+        
+        currentLightboxIndex = index;
+        updateLightboxImage();
+        lightboxModal.classList.add("active");
+        document.body.style.overflow = "hidden"; // Prevent scrolling
+    }
+    
+    function closeLightbox() {
+        lightboxModal.classList.remove("active");
+        document.body.style.overflow = ""; // Re-enable scrolling
+    }
+    
+    function updateLightboxImage() {
+        const imageObj = uploadedFiles[currentLightboxIndex];
+        if (!imageObj) return;
+        
+        // Use preview image if available (with detections), otherwise use original
+        const imageToShow = imageObj.previewImage || imageObj.dataURL;
+        lightboxImage.src = imageToShow;
+        
+        // Update counter
+        lightboxCounter.textContent = `${currentLightboxIndex + 1} / ${uploadedFiles.length}`;
+        
+        // Show/hide navigation buttons
+        lightboxPrev.style.display = uploadedFiles.length > 1 ? "flex" : "none";
+        lightboxNext.style.display = uploadedFiles.length > 1 ? "flex" : "none";
+    }
+    
+    function showPreviousImage() {
+        currentLightboxIndex = (currentLightboxIndex - 1 + uploadedFiles.length) % uploadedFiles.length;
+        updateLightboxImage();
+    }
+    
+    function showNextImage() {
+        currentLightboxIndex = (currentLightboxIndex + 1) % uploadedFiles.length;
+        updateLightboxImage();
+    }
+    
+    // Event listeners
+    lightboxClose.addEventListener("click", closeLightbox);
+    lightboxPrev.addEventListener("click", showPreviousImage);
+    lightboxNext.addEventListener("click", showNextImage);
+    
+    // Close on background click
+    lightboxModal.addEventListener("click", (e) => {
+        if (e.target === lightboxModal) {
+            closeLightbox();
+        }
+    });
+    
+    // Keyboard navigation
+    document.addEventListener("keydown", (e) => {
+        if (!lightboxModal.classList.contains("active")) return;
+        
+        if (e.key === "Escape") {
+            closeLightbox();
+        } else if (e.key === "ArrowLeft") {
+            showPreviousImage();
+        } else if (e.key === "ArrowRight") {
+            showNextImage();
+        }
+    });
 });

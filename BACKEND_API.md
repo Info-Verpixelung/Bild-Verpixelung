@@ -244,6 +244,11 @@ die echte base64 wäre 10.000+ zeichen lang, deshalb hab ich das hier gekürzt.
 
 ---
 
+## update (30. jan)
+
+das frontend verarbeitet jetzt eure responses und zeichnet die boxen auf die bilder. wenn ihr also koordinaten schickt, sieht der user die grünen rechtecke auf den preview-bildern. funktioniert soweit ganz gut
+
+---
+
 stand: 30. jan 2026
-format-version: 1.0
-nächste docs-update: wenn das frontend canvas-rendering startet
+format-version: 1.1
