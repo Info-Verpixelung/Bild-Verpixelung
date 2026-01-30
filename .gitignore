@@ -1,3 +1,9 @@
+# Project Context (local only, not pushed to Git)
+.project-context.md
+
+# Backend Testing (local development server, not pushed to Git)
+backend-testing/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
