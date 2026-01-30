@@ -23,9 +23,9 @@ jobs:
         run: |
           conda info
           python --version
-      - run: cd backend && python3 -m PyInstaller --onefile app.py
+      - run: python3 -m PyInstaller --onefile backend/app.py
 
       - uses: actions/upload-artifact@v4
         with:
           name: my-artifact
-          path: backend/dist/app.exe
+          path: dist/app.exe
