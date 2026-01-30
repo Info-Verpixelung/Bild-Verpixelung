@@ -15,7 +15,7 @@ jobs:
           miniconda-version: "latest"
           python-version: 3.10.15 #install the python needed
           auto-update-conda: true
-          active-environmennt: myenv
+          active-environmennt: bildverpixelung
           environment-file: backend/environment.yml
           use-mamba: true
       - name: Verify conda
