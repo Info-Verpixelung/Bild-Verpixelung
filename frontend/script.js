@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let userWarnedAboutStorage = false; // Only warn once per session
     let dragCounter = 0; // Track drag enter/leave to handle nested elements
     let db = null; // IndexedDB reference
+    const detectApiUrl = "http://localhost:5000/api/v1/detect";
 
     // IndexedDB setup
     function initIndexedDB() {
@@ -237,8 +238,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 uploadedFiles.push({ name: file.name, type: file.type, dataURL: e.target.result });
-                saveImagesToLocalStorage().catch(err => console.error("Error saving image:", err)); // Save after each new file is read
-                refreshImagePreviews(); // Re-render all previews after adding a new one
+                    updatePreviewButtonState();
+                    saveImagesToLocalStorage().catch(err => console.error("Error saving image:", err)); // Save after each new file is read
+                    refreshImagePreviews(); // Re-render all previews after adding a new one
             };
             reader.readAsDataURL(file);
         });
@@ -265,7 +267,24 @@ document.addEventListener("DOMContentLoaded", () => {
             removeImagePreview(index);
         });
 
+        // Add loading bar container
+        const loadingBarContainer = document.createElement("div");
+        loadingBarContainer.classList.add("loading-bar-container");
+        loadingBarContainer.style.display = "none";
+        
+        const loadingBar = document.createElement("div");
+        loadingBar.classList.add("loading-bar-fill");
+        loadingBarContainer.appendChild(loadingBar);
+        
+        // Add checkmark overlay
+        const checkmarkOverlay = document.createElement("div");
+        checkmarkOverlay.classList.add("checkmark-overlay");
+        checkmarkOverlay.innerHTML = "✓";
+        checkmarkOverlay.style.display = "none";
+
         previewWrapper.appendChild(img);
+        previewWrapper.appendChild(loadingBarContainer);
+        previewWrapper.appendChild(checkmarkOverlay);
         previewWrapper.appendChild(deleteButton);
         imagePreviewGrid.appendChild(previewWrapper);
     }
@@ -303,6 +322,96 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Update delete-all button visibility
         updateDeleteAllButtonVisibility();
+
+        // Update preview button state
+        updatePreviewButtonState();
+    }
+
+    // Easing function for smooth non-linear animation
+    function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    // Start loading bar animation (fills to 75% in 2-3 seconds)
+    function startLoadingAnimation(previewElement) {
+        const loadingBarContainer = previewElement.querySelector(".loading-bar-container");
+        const loadingBar = previewElement.querySelector(".loading-bar-fill");
+        
+        loadingBarContainer.style.display = "block";
+        loadingBar.style.width = "0%";
+        
+        const targetProgress = 0.75; // 75%
+        const animationDuration = Math.random() * 1000 + 2000; // 2-3 seconds in ms
+        const startTime = performance.now();
+        let animationId = null;
+
+        function animate(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / animationDuration, 1);
+            
+            // Apply easing function
+            const easedProgress = easeInOutCubic(progress);
+            const currentWidth = easedProgress * targetProgress * 100;
+            
+            loadingBar.style.width = currentWidth + "%";
+            
+            if (progress < 1) {
+                animationId = requestAnimationFrame(animate);
+            } else {
+                // Store animation state for later completion
+                previewElement._loadingAnimationId = null;
+                previewElement._loadingProgress = targetProgress;
+            }
+        }
+        
+        animationId = requestAnimationFrame(animate);
+        previewElement._loadingAnimationId = animationId;
+        previewElement._loadingStartTime = startTime;
+        previewElement._loadingDuration = animationDuration;
+        previewElement._targetProgress = targetProgress;
+        
+        return animationId;
+    }
+
+    // Complete loading bar animation (fill to 100% and show checkmark)
+    function completeLoadingAnimation(previewElement) {
+        const loadingBar = previewElement.querySelector(".loading-bar-fill");
+        const checkmarkOverlay = previewElement.querySelector(".checkmark-overlay");
+        
+        // Cancel any ongoing animation
+        if (previewElement._loadingAnimationId) {
+            cancelAnimationFrame(previewElement._loadingAnimationId);
+        }
+        
+        // Ensure transition is set BEFORE changing width
+        loadingBar.style.transition = "width 0.4s ease-out";
+        
+        // Force reflow to ensure transition is applied
+        void loadingBar.offsetHeight;
+        
+        // Fill to 100% quickly
+        loadingBar.style.width = "100%";
+        
+        // Show checkmark after bar animation completes
+        setTimeout(() => {
+            checkmarkOverlay.style.display = "flex";
+            
+            // Hide bar and checkmark after 1.5 seconds
+            setTimeout(() => {
+                const loadingBarContainer = previewElement.querySelector(".loading-bar-container");
+                loadingBarContainer.style.opacity = "0";
+                checkmarkOverlay.style.opacity = "0";
+                
+                setTimeout(() => {
+                    loadingBarContainer.style.display = "none";
+                    checkmarkOverlay.style.display = "none";
+                    loadingBarContainer.style.opacity = "1";
+                    checkmarkOverlay.style.opacity = "1";
+                    loadingBar.style.transition = "none";
+                    loadingBar.style.width = "0%";
+                }, 300);
+            }, 1500);
+        }, 400);
     }
 
     function updateDeleteAllButtonVisibility() {
@@ -312,6 +421,70 @@ document.addEventListener("DOMContentLoaded", () => {
             deleteAllButton.classList.remove("visible");
         }
     }
+
+    function updatePreviewButtonState() {
+        if (!previewButton) {
+            return;
+        }
+        previewButton.disabled = uploadedFiles.length === 0;
+    }
+
+    // Preview processing handler (send images to backend)
+    previewButton.addEventListener("click", async () => {
+        if (uploadedFiles.length === 0) {
+            return;
+        }
+
+        previewButton.disabled = true;
+        const originalText = previewButton.textContent;
+        previewButton.textContent = "⏳ Verarbeitung läuft...";
+        const subject = censorshipSubjectSelect.value; // e.g., faces | eyes | body
+
+        for (const [index, imageObj] of uploadedFiles.entries()) {
+            try {
+                // Get the preview element for this image
+                const previewElement = imagePreviewGrid.querySelector(`[data-file-index="${index}"]`);
+                if (previewElement) {
+                    // Start loading animation
+                    startLoadingAnimation(previewElement);
+                }
+
+                const payload = {
+                    subject,
+                    image: imageObj.dataURL,
+                    filename: imageObj.name,
+                    type: imageObj.type
+                };
+
+                const response = await fetch(detectApiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    console.error(`Preview request failed for image ${index + 1}:`, response.status);
+                    continue;
+                }
+
+                const data = await response.json();
+                console.log(`Preview response for image ${index + 1}:`, data);
+
+                // Complete loading animation
+                if (previewElement) {
+                    completeLoadingAnimation(previewElement);
+                }
+            } catch (error) {
+                console.error(`Preview request error for image ${index + 1}:`, error);
+            }
+        }
+
+        // Restore button text and state
+        previewButton.textContent = originalText;
+        updatePreviewButtonState();
+    });
 
     // Delete all images handler
     deleteAllButton.addEventListener("click", () => {
