@@ -1,39 +1,53 @@
-from flask import Blueprint, request, jsonify, send_file
-from engine.detector import detect
-from engine.censor import censor
-from engine.image_adapter import pil_to_np, np_to_pil
-from PIL import Image
+from flask import Blueprint, request, jsonify
+import base64
 import io
+from PIL import Image
 
 api = Blueprint("api", __name__)
 
-@api.route("/detect", methods=["POST"])
-def detect_faces():
-    file = request.files.get("file")
-    if not file:
-        return jsonify({"error": "No file provided"}), 400
+@api.route("/api/v1/detect", methods=["POST"])
+def detect():
+    data = request.get_json()
 
-    image = Image.open(file).convert("RGB")
-    boxes = detect(pil_to_np(image))
+    if not data:
+        return jsonify({
+            "status": "error",
+            "message": "No JSON body received"
+        }), 400
 
-    return jsonify({
-        "objects": [box.__dict__ for box in boxes]
-    })
+    try:
+        # Logging (wichtig für Debug)
+        print("📥 Detect request")
+        print("Subject:", data.get("subject"))
+        print("Filename:", data.get("filename"))
 
+        # --- Base64 DataURL verarbeiten ---
+        data_url = data["image"]
+        base64_string = data_url.split(",")[1]
+        image_bytes = base64.b64decode(base64_string)
 
-@api.route("/censor", methods=["POST"])
-def censor_faces():
-    file = request.files.get("file")
-    mode = request.form.get("mode", "pixelate")
+        image = Image.open(io.BytesIO(image_bytes))
+        width, height = image.size
 
-    image = Image.open(file).convert("RGB")
-    np_img = pil_to_np(image)
+        # --- TEMP: Dummy-Erkennung ---
+        # Eine Box mittig im Bild
+        objects = [{
+            "type": data.get("subject", "face"),
+            "x": width // 2,
+            "y": height // 2,
+            "w": width // 3,
+            "h": height // 3
+        }]
 
-    boxes = detect(np_img)
-    result = censor(np_img, boxes, mode)
+        return jsonify({
+            "status": "success",
+            "message": "Detection successful (dummy)",
+            "objects": objects
+        })
 
-    out = io.BytesIO()
-    np_to_pil(result).save(out, format="PNG")
-    out.seek(0)
-
-    return send_file(out, mimetype="image/png")
+    except Exception as e:
+        print("❌ Error:", str(e))
+        return jsonify({
+            "status": "error",
+            "message": f"Detection failed: {str(e)}"
+        }), 400
