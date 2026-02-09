@@ -5,7 +5,7 @@ on:
     types: [opened, reopened]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: checkout-repo-content
         uses: actions/checkout@v4 # checkout the repository content to github runner.
@@ -16,7 +16,7 @@ jobs:
           python-version: 3.10.15 #install the python needed
           auto-update-conda: true
           active-environmennt: bildverpixelung
-          environment-file: backend/environment.yml
+          environment-file: backend/environment-windows.yml
           use-mamba: true
       - name: Verify conda
         shell: bash -l {0}
@@ -28,4 +28,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: my-artifact
-          path: /home/runner/work/Bild-Verpixelung/Bild-Verpixelung/dist/
+          path: D:\a\Bild-Verpixelung\Bild-Verpixelung\dist
