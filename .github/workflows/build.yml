@@ -16,7 +16,7 @@ jobs:
           python-version: 3.10.15 #install the python needed
           auto-update-conda: true
           active-environmennt: bildverpixelung
-          environment-file: backend/environment.yml
+          environment-file: backend/environment-win.yml
           use-mamba: true
       - name: Verify conda
         shell: bash -l {0}
