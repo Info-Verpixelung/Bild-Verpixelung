@@ -3,6 +3,8 @@ on:
   workflow_dispatch:
   pull_request:
     types: [opened, reopened]
+    branches:
+      - main
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -15,7 +17,7 @@ jobs:
           miniconda-version: "latest"
           python-version: 3.10.15 #install the python needed
           auto-update-conda: true
-          active-environmennt: bildverpixelung
+          activate-environment: bildverpixelung
           environment-file: backend/environment-windows.yml
           use-mamba: true
       - name: Verify conda
@@ -23,8 +25,7 @@ jobs:
         run: |
           conda info
           python --version
-      - run: conda run -n test python -m PyInstaller --onefile backend/app.py
-
+      - run: conda run -n bildverpixelung python -m PyInstaller --onefile backend/api/app.py
       - uses: actions/upload-artifact@v4
         with:
           name: Windows-build
@@ -40,7 +41,7 @@ jobs:
           miniconda-version: "latest"
           python-version: 3.10.15 #install the python needed
           auto-update-conda: true
-          active-environmennt: bildverpixelung
+          activate-environment: bildverpixelung
           environment-file: backend/environment-mac.yml
           use-mamba: true
       - name: Verify conda
@@ -48,7 +49,7 @@ jobs:
         run: |
           conda info
           python --version
-      - run: conda run -n test python -m PyInstaller --onefile backend/app.py
+      - run: conda run -n bildverpixelung python -m PyInstaller --onefile backend/api/app.py
 
       - uses: actions/upload-artifact@v4
         with:
@@ -65,7 +66,7 @@ jobs:
           miniconda-version: "latest"
           python-version: 3.10.15 #install the python needed
           auto-update-conda: true
-          active-environmennt: bildverpixelung
+          activate-environment: bildverpixelung
           environment-file: backend/environment-mac.yml
           use-mamba: true
       - name: Verify conda
@@ -73,7 +74,7 @@ jobs:
         run: |
           conda info
           python --version
-      - run: conda run -n test python -m PyInstaller --onefile backend/app.py
+      - run: conda run -n bildverpixelung python -m PyInstaller --onefile backend/api/app.py
 
       - uses: actions/upload-artifact@v4
         with:
