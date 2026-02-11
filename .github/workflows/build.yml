@@ -30,7 +30,7 @@ jobs:
         with:
           name: Windows-build
           path: D:\a\Bild-Verpixelung\Bild-Verpixelung\dist
-          retention-days: 3
+          retention-days: 2
   build-mac:
     runs-on: macos-latest
     steps:
