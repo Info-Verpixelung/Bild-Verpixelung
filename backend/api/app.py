@@ -1,8 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask
 from flask_cors import CORS
-import base64
-import io
-from PIL import Image
+from routes import detect_handler
+import webbrowser
+import threading
+import time
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -11,69 +13,34 @@ CORS(app)
 def health():
     return "status ok"
 
-def decode_data_url(data_url: str) -> Image.Image:
-    # expected format: "data:image/jpeg;base64,...."
-    if "," not in data_url:
-        raise ValueError("Invalid data URL, missing comma separator")
-    prefix, b64_data = data_url.split(",", 1)
-    if not prefix.startswith("data:image/"):
-        raise ValueError("Invalid data URL prefix")
-    image_bytes = base64.b64decode(b64_data)
-    return Image.open(io.BytesIO(image_bytes))
-
 @app.route("/api/v1/detect", methods=["POST"])
 def detect():
-    """
-    Expected JSON from frontend:
-    {
-      "subject": "faces" | "eyes" | "body",
-      "image": "data:image/jpeg;base64,...",
-      "filename": "photo001.jpg",
-      "type": "image/jpeg"
-    }
-    """
-    data = request.get_json(silent=True) or {}
+    """Delegiert an die Engine in routes.py"""
+    return detect_handler()
 
-    subject = data.get("subject")
-    image_data_url = data.get("image")
-    filename = data.get("filename")
-    mime_type = data.get("type")
+def open_frontend():
+    """Öffnet direkt frontend/index.html im Browser"""
+    # Pfad zur index.html relativ zum backend/app.py
+    frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/index.html"))
 
-    # Basic validation
-    if not subject or not image_data_url:
-        return jsonify({
-            "status": "error",
-            "message": "Missing 'subject' or 'image' in request body",
-            "objects": []
-        }), 400
+    print("\n🚀 Öffne Frontend automatisch...")
+    print(f"📄 Starte: file://{frontend_path}")
+    print()
 
-    try:
-        # Decode image once; later you can pass this PIL image to your real detector
-        img = decode_data_url(image_data_url)
-        width, height = img.size
-    except Exception as e:
-        return jsonify({
-            "status": "error",
-            "message": f"Failed to decode image: {e}",
-            "objects": []
-        }), 400
+    # 1 Sekunde warten bis Flask läuft
+    time.sleep(1)
 
-    # TODO: replace this stub with real detection
-    # For now we just return a single box in the center so frontend can be tested
-    dummy_box = {
-        "type": "face",      # or use subject if you prefer
-        "x": width // 2,     # center x
-        "y": height // 2,    # center y
-        "w": width // 3,     # box width
-        "h": height // 3     # box height
-    }
-
-    return jsonify({
-        "status": "success",
-        "message": f"Dummy detection for {filename or 'image'} (subject={subject}, type={mime_type})",
-        "objects": [dummy_box]
-    })
+    # Direkt index.html öffnen
+    webbrowser.open(f"file://{frontend_path}")
 
 if __name__ == "__main__":
-    # Frontend uses http://localhost:5000/api/v1/detect
+    print("🎯 Bild-Verpixelungs-App startet...")
+    print("📡 Backend-Server auf http://localhost:5001")
+
+    # Browser-Thread starten
+    browser_thread = threading.Thread(target=open_frontend)
+    browser_thread.daemon = True
+    browser_thread.start()
+
+    # Flask mit deinen gewünschten Settings
     app.run(host="0.0.0.0", port=5001, debug=False, use_reloader=False)
