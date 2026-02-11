@@ -27,7 +27,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: my-artifact
+          name: Windows-build
           path: D:\a\Bild-Verpixelung\Bild-Verpixelung\dist
   build-mac:
     runs-on: macos-latest
@@ -52,7 +52,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: my-artifact
+          name: Mac-build
           path: /Users/runner/work/Bild-Verpixelung/Bild-Verpixelung/dist
   build-linux:
     runs-on: ubuntu-latest
@@ -77,5 +77,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: my-artifact
+          name: Linux-build
           path: /home/runner/work/Bild-Verpixelung/Bild-Verpixelung/dist
