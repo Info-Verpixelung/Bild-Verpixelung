@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let dragCounter = 0; // Track drag enter/leave to handle nested elements
     let db = null; // IndexedDB reference
     const detectApiUrl = "http://localhost:5000/api/v1/detect";
-
+    const placeholderImageUrl = "./icons/placeholder.png"; // Local placeholder image
     // IndexedDB setup
     function initIndexedDB() {
         return new Promise((resolve, reject) => {
@@ -624,7 +624,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 outputWrapper.classList.add("image-preview-item");
 
                 const img = document.createElement("img");
-                img.src = `https://via.placeholder.com/400x200.png?text=Anonymisiertes+Bild+${index + 1}`;
+                img.src = placeholderImageUrl;
                 img.alt = "Ausgabevorschau";
 
                 outputWrapper.appendChild(img);
