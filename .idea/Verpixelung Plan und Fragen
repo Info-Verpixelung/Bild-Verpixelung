@@ -1,0 +1,13 @@
+Plan:
+- erst Verpixelung, dann schwarzer balken (siehe Fragen)
+- Dummy-bild mit test-verpixelungs-Area importieren
+- in Verpixelung reinlesen
+- funktion dafür schreiben, testen (auch mit mehreren Verpixelungs-Areas)
+
+
+Fragen:
+
+Schwarzer Balken: ganzes Gesicht oder schwarzer Balken nur über den Augen (o.ä.)?
+-> nur schwarzer Balken könnte schwer werden mit unserer Funktionsweise, man müsste schon vor dem Einsenden des Bilds wissen, ob man schwarzen balken oder verpixelung macht
+
+Verpixelung: Feste Pixelgröße oder feste Pixelanzahl?
