@@ -6,10 +6,10 @@
  - [x] 4. Bilder werden hochgeladen egal wohin man sie zieht auf der Seite
  - [x] 5. Unfassbar nerviger bug (Text in den vorschau feldern verschwindet und kommt nicht wieder) fixen
  - [x] 6. Hochgeladene Bilder sollten nicht verschwinden bei reload -> verursacht höchstwahrscheinlich den local storage error, kümmer ich mich später drum
- - [ ] 7. local storage error (DOMException) lösen, tritt ab dem zweiten bild auf
+ - [x] 7. local storage error (DOMException) lösen, tritt ab dem zweiten bild auf PS: Nicht wirklich vermeidbar local browser storage hat ca. 5-10mb platz, nur teilweise gelöst aber anders nicht möglich aktuell PPS: Vollständig gelöst. LocalStorage ist für kleine dinge gemacht nicht für Dateien/Bilder, IndexedDB ist für größeren lokalen speicher zu gebrauchen jetzt limit bei 50mb (sogar noch vergrößerbar aber reicht vorerst)
  - [ ] 8. Vorschau für hochgeladene/anonymisierte Bilder (in groß) bei mehreren Bildern durchklickbar
- - [ ] 9. Button zum löschen aller hochgeladener Bilder mit einem Click
- - [ ] 10. Drag and drop visuell ansprechbar machen (low prio)
- - [ ] 11. Favicon error fixen, nicht extrem wichtig aber clean
- - [ ] 12. Drag and drop funktioniert überall **außer** auf der upload fläche **UNBEDINGT FIXEN!**
+ - [x] 9. Button zum löschen aller hochgeladener Bilder mit einem Click + Nach bestätigung fragen
+ - [x] 10. Drag and drop visuell ansprechbar machen (low prio) PS: Zeitaufwendig aber wow sieht das toll aus :)
+ - [x] 11. Favicon error fixen, nicht extrem wichtig aber clean
+ - [x] 12. Drag and drop funktioniert überall **außer** auf der upload fläche **UNBEDINGT FIXEN!**
  - [ ] (Für später): **Input validation von bildern** (sicherheitslücken vermeiden, anti memory-ressource exhaustion, prüfen dass auch wirklich **BILDER** hochgeladen wurden, upload Größe beschränken menge und größe der bilder insgesamt) **FALLS** das Projekt als website gehostet wird, extrem wichtig und potentiell angreifbar (gilt für alle requests außer "GET" aber *im Fall vom hosten Pentest unvermeidbar*)
