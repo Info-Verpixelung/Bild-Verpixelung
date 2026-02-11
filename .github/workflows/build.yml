@@ -30,6 +30,7 @@ jobs:
         with:
           name: Windows-build
           path: D:\a\Bild-Verpixelung\Bild-Verpixelung\dist
+          retention-days: 3
   build-mac:
     runs-on: macos-latest
     steps:
@@ -55,6 +56,7 @@ jobs:
         with:
           name: Mac-build
           path: /Users/runner/work/Bild-Verpixelung/Bild-Verpixelung/dist
+          retention-days: 1
   build-linux:
     runs-on: ubuntu-latest
     steps:
@@ -80,3 +82,4 @@ jobs:
         with:
           name: Linux-build
           path: /home/runner/work/Bild-Verpixelung/Bild-Verpixelung/dist
+          retention-days: 1
