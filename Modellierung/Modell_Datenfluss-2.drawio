@@ -1,0 +1,131 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Safari/605.1.15" version="29.3.6">
+  <diagram name="Seite-1" id="WtwDhzw60NmaJGH-lxG8">
+    <mxGraphModel dx="1148" dy="822" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-13" edge="1" parent="1" source="aD0cPMgMY2rKes9XPLCM-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;fillColor=#d5e8d4;strokeColor=#82b366;" target="aD0cPMgMY2rKes9XPLCM-2" value="lädt Bild hoch">
+          <mxGeometry relative="1" x="0.0109" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="102" y="220" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-26" edge="1" parent="1" source="aD0cPMgMY2rKes9XPLCM-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fillColor=#fff2cc;strokeColor=#d6b656;" target="aD0cPMgMY2rKes9XPLCM-25" value="wenn Gesichter richtig erkannt:&amp;nbsp;&lt;div&gt;Bestätigung den Verpixelungsprozess zu starten&amp;nbsp;&lt;/div&gt;">
+          <mxGeometry relative="1" x="0.2399" y="5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-33" edge="1" parent="1" source="aD0cPMgMY2rKes9XPLCM-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.6;entryY=0;entryDx=0;entryDy=0;fillColor=#f8cecc;strokeColor=#3333FF;entryPerimeter=0;" target="aD0cPMgMY2rKes9XPLCM-29">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="187" y="110" />
+              <mxPoint x="710" y="110" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-34" connectable="0" parent="aD0cPMgMY2rKes9XPLCM-33" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="wenn Ergebnis zufriedenstellend: Betätigung des Download-Buttons" vertex="1">
+          <mxGeometry relative="1" x="0.322" y="1" as="geometry">
+            <mxPoint x="-121" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Pt_rkVjHnu3g2V8gQT5h-2" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#FF0000;" target="Pt_rkVjHnu3g2V8gQT5h-1" value="betätigt Löschbutton&lt;div&gt;(für ein spezifisches Bild oder für Alle)&amp;nbsp;&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="402" y="205" />
+            </Array>
+            <mxPoint x="230" y="205" as="sourcePoint" />
+            <mxPoint x="393" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Kunde&amp;nbsp;" vertex="1">
+          <mxGeometry height="60" width="120" x="127" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-14" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fillColor=#d5e8d4;strokeColor=#82b366;" value="schickt Bild an">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="57" y="340" as="sourcePoint" />
+            <mxPoint x="57" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Website: Input/ Hochladen des Bildes" vertex="1">
+          <mxGeometry height="60" width="120" x="41" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-15" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fillColor=#d5e8d4;strokeColor=#82b366;" value="schickt Bild an">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="58" y="460" as="sourcePoint" />
+            <mxPoint x="58" y="554" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Backend: Speicherung unverändertes Bild" vertex="1">
+          <mxGeometry height="60" width="120" x="41" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-20" edge="1" parent="1" source="aD0cPMgMY2rKes9XPLCM-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fillColor=#d5e8d4;strokeColor=#82b366;" target="aD0cPMgMY2rKes9XPLCM-19" value="&lt;span style=&quot;caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0); font-family: Helvetica; font-size: 11px; font-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; white-space: nowrap; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration: none; float: none; display: inline !important;&quot;&gt;schickt bounding&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0); font-family: Helvetica; font-size: 11px; font-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; white-space: nowrap; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration: none; float: none; display: inline !important;&quot;&gt;&amp;nbsp;boxes an&lt;/span&gt;&lt;/div&gt;">
+          <mxGeometry relative="1" x="-0.003" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="API: führt Gesichtserkennung durch" vertex="1">
+          <mxGeometry height="60" width="120" x="42" y="554" as="geometry" />
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-24" edge="1" parent="1" source="aD0cPMgMY2rKes9XPLCM-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;fillColor=#d5e8d4;strokeColor=#82b366;" value="Weiterleitung der Information">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="162" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Website: Grafische Anzeige der erkannten Gesichter/ Merkmale" vertex="1">
+          <mxGeometry height="60" width="120" x="202" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-21" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;span style=&quot;caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0); font-family: Helvetica; font-size: 11px; font-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; white-space: nowrap; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration: none; display: inline !important; float: none;&quot;&gt;schickt bounding boxes an&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="261" y="400" as="sourcePoint" />
+            <mxPoint x="261" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-19" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Backend: Weiterleitung bounding boxes" vertex="1">
+          <mxGeometry height="60" width="120" x="202" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-28" edge="1" parent="1" source="aD0cPMgMY2rKes9XPLCM-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fillColor=#fff2cc;strokeColor=#d6b656;" target="aD0cPMgMY2rKes9XPLCM-27" value="leitet Befehl und&amp;nbsp;&lt;div&gt;momentan ausgewählte&lt;/div&gt;&lt;div&gt;Verpixelungsart weiter&amp;nbsp;&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-25" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Website: Button für &quot;Verpixelung starten&quot; wird gedrückt&amp;nbsp;" vertex="1">
+          <mxGeometry height="60" width="120" x="478" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-30" edge="1" parent="1" source="aD0cPMgMY2rKes9XPLCM-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fillColor=#fff2cc;strokeColor=#d6b656;" target="aD0cPMgMY2rKes9XPLCM-29" value="leitet verändertes&amp;nbsp;&lt;div&gt;Bild weiter&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-27" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Backend: Bildmanipulation" vertex="1">
+          <mxGeometry height="60" width="120" x="478" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-35" edge="1" parent="1" source="aD0cPMgMY2rKes9XPLCM-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;fillColor=#f8cecc;strokeColor=#3333FF;" target="aD0cPMgMY2rKes9XPLCM-1" value="wenn Download-Button betätigt wurde: Ausgabe des verpixelten Bildes&amp;nbsp;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="730" y="280" />
+              <mxPoint x="730" y="90" />
+              <mxPoint x="157" y="90" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-37" edge="1" parent="1" source="aD0cPMgMY2rKes9XPLCM-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;fillColor=#fff2cc;strokeColor=#d6b656;" target="aD0cPMgMY2rKes9XPLCM-1" value="Weiterleitung der Information">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-29" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Website: Anzeige des verpixelten Bildes" vertex="1">
+          <mxGeometry height="60" width="120" x="638" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="aD0cPMgMY2rKes9XPLCM-36" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Erläuterungen&lt;/h1&gt;&lt;div&gt;Infos zu wie man ein Datenflussdiagramm fomell machen muss von hier:&amp;nbsp;&lt;a href=&quot;https://www.ibm.com/de-de/think/topics/data-flow-diagram&quot;&gt;https://www.ibm.com/de-de/think/topics/data-flow-diagram&lt;/a&gt;&lt;/div&gt;&lt;div&gt;Externe Entitäten in Rechtecken, Prozesse in abgerundeten Rechtecken, Datenflüsse als Pfeile&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Zur Reihenfolge:&amp;nbsp;&lt;/div&gt;&lt;div&gt;1. Grün: &amp;nbsp;(Zyklus für jedes hochgeladene Bild einzeln ausgeführt)&amp;nbsp;&lt;/div&gt;&lt;div&gt;2. Rot: (eventuell, wenn Kunde löschen betätigt)&amp;nbsp;&lt;/div&gt;&lt;div&gt;Vor allem 1. erfolgt kontinuierlich und beobachtet Änderungen, 2. auch. Die beiden können sich beliebig oft abwechseln bis 3. betätigt wird&lt;/div&gt;&lt;div&gt;3. Gelb: (eventuell, wenn Kunde Vereitelung bestätigt), nachdem 1. erfolgt &amp;nbsp;und evt. 2 (in mehreren Wiederholungen möglich) erfolgt ist&lt;/div&gt;&lt;div&gt;4. Blau: (eventuell wenn Kunde herunterladen betätigt) nur nachdem 3. erfolgt&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="190" width="431" x="322" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="Pt_rkVjHnu3g2V8gQT5h-4" edge="1" parent="1" source="Pt_rkVjHnu3g2V8gQT5h-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#FF0000;" target="Pt_rkVjHnu3g2V8gQT5h-3" value="leitet Information&lt;div&gt;&amp;nbsp;welches Bild&amp;nbsp;&lt;/div&gt;&lt;div&gt;gelöscht weiter&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Pt_rkVjHnu3g2V8gQT5h-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Website: zeigt Bild(er) nicht mehr an" vertex="1">
+          <mxGeometry height="60" width="102" x="351" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="Pt_rkVjHnu3g2V8gQT5h-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Backend: Speichert Bild nicht mehr" vertex="1">
+          <mxGeometry height="60" width="102" x="351" y="400" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
