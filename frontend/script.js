@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let userWarnedAboutStorage = false; // Only warn once per session
     let dragCounter = 0; // Track drag enter/leave to handle nested elements
     let db = null; // IndexedDB reference
-    const detectApiUrl = "http://localhost:5000/api/v1/detect";
+    const detectApiUrl = "http://localhost:5001/api/v1/detect";
 
     // IndexedDB setup
     function initIndexedDB() {
