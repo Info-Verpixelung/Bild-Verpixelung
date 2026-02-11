@@ -11,3 +11,10 @@ Schwarzer Balken: ganzes Gesicht oder schwarzer Balken nur über den Augen (o.ä
 -> nur schwarzer Balken könnte schwer werden mit unserer Funktionsweise, man müsste schon vor dem Einsenden des Bilds wissen, ob man schwarzen balken oder verpixelung macht
 
 Verpixelung: Feste Pixelgröße oder feste Pixelanzahl?
+
+
+Anforderungen verpixelung:
+- bekommen den bereich der verpixelung & Bilddatei als Base64
+- funktion muss die Pixel im Bereich einteilen, durchschnitt berechnen und alle pixel in dem bereich auf den durchschnitt ändern
+
+- anzahl der bereiche auf variable setzen (15-20 sind optimal)
