@@ -23,7 +23,7 @@ jobs:
         run: |
           conda info
           python --version
-      - run: conda run -n test python -m PyInstaller --onefile backend/app.py
+      - run: conda run -n test python -m PyInstaller --onefile backend/api/app.py
 
       - uses: actions/upload-artifact@v4
         with:
@@ -48,7 +48,7 @@ jobs:
         run: |
           conda info
           python --version
-      - run: conda run -n test python -m PyInstaller --onefile backend/app.py
+      - run: conda run -n test python -m PyInstaller --onefile backend/api/app.py
 
       - uses: actions/upload-artifact@v4
         with:
@@ -73,7 +73,7 @@ jobs:
         run: |
           conda info
           python --version
-      - run: conda run -n test python -m PyInstaller --onefile backend/app.py
+      - run: conda run -n test python -m PyInstaller --onefile backend/api/app.py
 
       - uses: actions/upload-artifact@v4
         with:
