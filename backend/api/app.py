@@ -76,4 +76,4 @@ def detect():
 
 if __name__ == "__main__":
     # Frontend uses http://localhost:5000/api/v1/detect
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    app.run(host="0.0.0.0", port=8000, debug=True)
