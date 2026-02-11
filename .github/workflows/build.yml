@@ -78,4 +78,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: my-artifact
-          path: /Users/runner/work/Bild-Verpixelung/Bild-Verpixelung/dist
+          path: /home/runner/work/Bild-Verpixelung/Bild-Verpixelung/dist
