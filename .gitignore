@@ -2,7 +2,7 @@
 .project-context.md
 
 # Backend Testing (local development server, not pushed to Git)
-backend-testing/
+frontend/backend-testing/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
