@@ -1,12 +1,19 @@
 name: Build-EXE
 on:
   workflow_dispatch:
+    inputs:
+      OnlyMac:
+        description: 'Only generate mac binary'
+        required: false
+        default: false
+        type: boolean
   pull_request:
     types: [opened, reopened, edited, review_requested, ready_for_review, auto_merge_enabled]
     branches:
       - main
 jobs:
   build-windows:
+    if: ${{ inputs.OnlyMac == false }}
     runs-on: windows-latest
     steps:
       - name: checkout-repo-content
@@ -58,6 +65,7 @@ jobs:
           path: /Users/runner/work/Bild-Verpixelung/Bild-Verpixelung/dist
           retention-days: 1
   build-linux:
+    if: ${{ inputs.OnlyMac == false }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout-repo-content
