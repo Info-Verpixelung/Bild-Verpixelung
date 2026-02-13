@@ -82,7 +82,7 @@ jobs:
             --onefile \
             --add-data "templates:templates" \
             --add-data "static:static" \
-            backend/api/app.py
+            api/app.py
 
       - uses: actions/upload-artifact@v4
         with:
