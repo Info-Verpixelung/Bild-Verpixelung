@@ -2,7 +2,7 @@
 .project-context.md
 
 # Backend Testing (local development server, not pushed to Git)
-backend-testing/
+frontend/backend-testing/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -211,3 +211,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Frontend (Vite/Node)
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env
+frontend/.env.*
