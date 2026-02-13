@@ -13,8 +13,8 @@ if getattr(sys, 'frozen', False):
 else:
     base_path = os.path.abspath(os.path.dirname(__file__))
 
-template_folder = os.path.join(base_path, "../templates")
-static_folder = os.path.join(base_path, "../static")
+template_folder = os.path.join(base_path, "templates")
+static_folder = os.path.join(base_path, "static")
 
 app = Flask(
     __name__,
