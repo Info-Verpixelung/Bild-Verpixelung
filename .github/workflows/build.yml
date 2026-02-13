@@ -2,7 +2,7 @@ name: Build-EXE
 on:
   workflow_dispatch:
   pull_request:
-    types: [opened, reopened, edited, review_requested]
+    types: [opened, reopened, edited, review_requested, ready_for_review]
     branches:
       - main
 jobs:
