@@ -1,0 +1,35 @@
+name: Block Emojis in Code Files
+
+on:
+  pull_request:
+
+jobs:
+  emoji-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed .py and .js files
+        shell: bash
+        run: |
+          git fetch origin "${{ github.base_ref }}"
+          git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(py|js)$' > changed_files.txt || true
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Run emoji scan
+        shell: bash
+        run: |
+          if [ ! -s changed_files.txt ]; then
+            echo "No changed .py or .js files."
+            exit 0
+          fi
+
+          python3 .github/scripts/emoji_scan.py changed_files.txt
