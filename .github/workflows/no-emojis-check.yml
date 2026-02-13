@@ -32,5 +32,4 @@ jobs:
             exit 0
           fi
 
-          # Copy the Python scanner from a committed file in your repo
           python3 .github/scripts/emoji_scan.py changed_files.txt
