@@ -2,9 +2,11 @@ name: Build-EXE
 on:
   workflow_dispatch:
   pull_request:
-    types: [opened, reopened, edited]
+    types: [opened, reopened, edited, review_requested]
     branches:
       - main
+    paths:
+      - 'backend/**'
 jobs:
   build-windows:
     runs-on: windows-latest
