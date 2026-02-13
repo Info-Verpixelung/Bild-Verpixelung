@@ -25,7 +25,6 @@ jobs:
           echo "files<<EOF" >> $GITHUB_OUTPUT
           echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-
       - name: Scan for emojis in executable code
         run: |
           FILES="${{ steps.changed-files.outputs.files }}"
@@ -35,7 +34,7 @@ jobs:
             exit 0
           fi
 
-          python3 << 'EOF'
+          cat > emoji_scan.py << 'PYTHON_SCRIPT'
 import sys
 import re
 import tokenize
@@ -43,10 +42,9 @@ from io import BytesIO
 import pathlib
 
 EMOJI_PATTERN = re.compile(r'[\U0001F300-\U0001FAFF\u2600-\u27BF]')
-files = """${{ steps.changed-files.outputs.files }}""".strip().splitlines()
+files = sys.argv[1:]
 
 found = False
-
 
 def scan_python(path):
     global found
@@ -68,20 +66,15 @@ def strip_js_comments_and_strings(code):
     length = len(code)
 
     while i < length:
-        # Single-line comment //
         if code[i:i+2] == "//":
             i += 2
             while i < length and code[i] != "\n":
                 i += 1
-
-        # Multi-line comment /* */
         elif code[i:i+2] == "/*":
             i += 2
             while i < length-1 and code[i:i+2] != "*/":
                 i += 1
             i += 2
-
-        # String literals
         elif code[i] in ('"', "'", "`"):
             quote = code[i]
             i += 1
@@ -127,4 +120,6 @@ if found:
     sys.exit(1)
 else:
     print("✅ No emojis found in executable code.")
-EOF
+PYTHON_SCRIPT
+
+          python3 emoji_scan.py $FILES
