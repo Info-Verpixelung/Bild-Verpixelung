@@ -29,7 +29,7 @@ def decode_data_url(data_url: str) -> Image.Image:
     image = Image.open(io.BytesIO(image_bytes))
     width, height = image.size
 
-    logger.info(f"📸 BILD EMPFANGEN: {request.json.get('filename', 'unknown')} | "
+    logger.info(f"BILD EMPFANGEN: {request.json.get('filename', 'unknown')} | "
                 f"Größe: {width}x{height} | "
                 f"Subject: {request.json.get('subject', 'unknown')} | "
                 f"MIME: {request.json.get('type', 'unknown')}")
@@ -45,7 +45,7 @@ def detect_objects_stub(image, subject: str, width: int, height: int):
     box_width = min(width, height) // 3
     box_height = box_width * 0.8  # etwas höher als breit
 
-    logger.info(f"🔍 Dummy-Detection für '{subject}': Box bei x={center_x}, y={center_y}, w={box_width}, h={box_height}")
+    logger.info(f"Dummy-Detection für '{subject}': Box bei x={center_x}, y={center_y}, w={box_width}, h={box_height}")
 
     return [{
         "type": subject if subject in ["face", "faces"] else "object",
@@ -75,7 +75,7 @@ def detect_handler():
     filename = data["filename"]
     image_data_url = data["image"]
 
-    logger.info(f"🎯 Neuer Request: {filename} | Subject: {subject}")
+    logger.info(f"Neuer Request: {filename} | Subject: {subject}")
 
     try:
         # 1. Bild decodieren

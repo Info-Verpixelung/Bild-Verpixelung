@@ -24,7 +24,7 @@ def open_frontend():
     frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/index.html"))
 
     print("\nÖffne Frontend automatisch...")
-    print(f"📄 Starte: file://{frontend_path}")
+    print(f"Starte: file://{frontend_path}")
     print()
 
     # 1 Sekunde warten bis Flask läuft
