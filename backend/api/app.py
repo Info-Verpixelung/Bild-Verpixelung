@@ -5,6 +5,7 @@ import webbrowser
 import threading
 import time
 import os
+import subprocess  # Add this import
 
 app = Flask(__name__)
 CORS(app)
@@ -19,19 +20,43 @@ def detect():
     return detect_handler()
 
 def open_frontend():
-    """Öffnet direkt frontend/index.html im Browser"""
-    # Pfad zur index.html relativ zum backend/app.py
-    frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/index.html"))
+    """Startet npm dev server im frontend Ordner und öffnet Browser"""
+    # Pfad zum frontend Ordner relativ zu app.py
+    frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend"))
 
-    print("\nÖffne Frontend automatisch...")
-    print(f"Starte: file://{frontend_path}")
+    if not os.path.exists(frontend_dir):
+        print(f"Frontend-Ordner nicht gefunden: {frontend_dir}")
+        return
+
+    print("\nStarte Frontend automatisch...")
+    print(f"Frontend-Ordner: {frontend_dir}")
     print()
 
-    # 1 Sekunde warten bis Flask läuft
-    time.sleep(1)
+    # 1. npm install (nur wenn node_modules fehlt oder --force)
+    if not os.path.exists(os.path.join(frontend_dir, "node_modules")):
+        print("Installiere npm Dependencies...")
+        subprocess.Popen(["npm", "install"], cwd=frontend_dir)
+        time.sleep(3)  # Kurze Pause für Installation
+    else:
+        print("node_modules bereits vorhanden")
 
-    # Direkt index.html öffnen
-    webbrowser.open(f"file://{frontend_path}")
+    # 2. npm run dev starten (als separater Prozess)
+    print("⚡ Starte Vite Dev Server (npm run dev)...")
+    dev_process = subprocess.Popen(
+        ["npm", "run", "dev"],
+        cwd=frontend_dir,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True
+    )
+
+    # 4 Sekunden warten bis Vite-Server läuft
+    print("Warte auf Vite Dev Server...")
+    time.sleep(4)
+
+    # 3. Browser öffnen (Vite läuft standardmäßig auf Port 5173)
+    print("Öffne http://localhost:5173")
+    webbrowser.open("http://localhost:5173")
 
 if __name__ == "__main__":
     print("Bild-Verpixelungs-App startet...")
@@ -42,5 +67,5 @@ if __name__ == "__main__":
     browser_thread.daemon = True
     browser_thread.start()
 
-    # Flask mit deinen gewünschten Settings
+    # Flask Server starten
     app.run(host="0.0.0.0", port=5001, debug=False, use_reloader=False)
