@@ -8,7 +8,6 @@ on:
         default: false
         type: boolean
   pull_request:
-    types: [opened, reopened, edited, review_requested, ready_for_review, auto_merge_enabled]
     branches:
       - main
 
