@@ -65,7 +65,7 @@ def detect_handler():
     required_fields = ["subject", "image", "filename", "type"]
     missing = [field for field in required_fields if not data.get(field)]
     if missing:
-        logger.error(f"❌ FEHLENDE FIELDS: {missing}")
+        logger.error(f"FEHLENDE FIELDS: {missing}")
         return jsonify({
             "status": "error",
             "message": f"Missing required fields: {', '.join(missing)}"
@@ -92,11 +92,11 @@ def detect_handler():
             "objects": objects
         }
 
-        logger.info(f"✅ SUCCESS: {len(objects)} Objekte für {filename}")
+        logger.info(f"SUCCESS: {len(objects)} Objekte für {filename}")
         return jsonify(response)
 
     except Exception as e:
-        logger.error(f"💥 FEHLER bei {filename}: {str(e)}")
+        logger.error(f"FEHLER bei {filename}: {str(e)}")
         return jsonify({
             "status": "error",
             "message": f"Processing failed: {str(e)}",

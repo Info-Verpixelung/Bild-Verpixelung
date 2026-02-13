@@ -23,7 +23,7 @@ def open_frontend():
     # Pfad zur index.html relativ zum backend/app.py
     frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/index.html"))
 
-    print("\n🚀 Öffne Frontend automatisch...")
+    print("\nÖffne Frontend automatisch...")
     print(f"📄 Starte: file://{frontend_path}")
     print()
 
@@ -34,8 +34,8 @@ def open_frontend():
     webbrowser.open(f"file://{frontend_path}")
 
 if __name__ == "__main__":
-    print("🎯 Bild-Verpixelungs-App startet...")
-    print("📡 Backend-Server auf http://localhost:5001")
+    print("Bild-Verpixelungs-App startet...")
+    print("Backend-Server auf http://localhost:5001")
 
     # Browser-Thread starten
     browser_thread = threading.Thread(target=open_frontend)
