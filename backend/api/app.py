@@ -10,11 +10,18 @@ import sys
 # Handle PyInstaller temp folder
 if getattr(sys, 'frozen', False):
     base_path = sys._MEIPASS
+    print("Files in _MEIPASS root:", os.listdir(sys._MEIPASS))
+    print("Templates folder:", os.listdir(os.path.join(sys._MEIPASS, "templates")))
+    print("Static folder:", os.listdir(os.path.join(sys._MEIPASS, "static")))
 else:
-    base_path = os.path.abspath(os.path.dirname(__file__))
+    base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-template_folder = os.path.join(base_path, "../templates")
-static_folder = os.path.join(base_path, "../static")
+template_folder = os.path.join(base_path, "templates")
+static_folder = os.path.join(base_path, "static")
+
+print("Using template folder:", template_folder)
+print("Using static folder:", static_folder)
+
 
 app = Flask(
     __name__,
