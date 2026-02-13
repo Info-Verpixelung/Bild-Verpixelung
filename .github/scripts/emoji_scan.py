@@ -66,6 +66,7 @@ with open(file_list) as f:
     files = [line.strip() for line in f if line.strip()]
 
 for file_path in files:
+    print(file_path)
     path = pathlib.Path(file_path)
     try:
         if path.suffix == ".py":
