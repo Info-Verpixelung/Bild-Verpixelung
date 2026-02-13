@@ -624,7 +624,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 outputWrapper.classList.add("image-preview-item");
 
                 const img = document.createElement("img");
-                img.src = `https://via.placeholder.com/400x200.png?text=Anonymisiertes+Bild+${index + 1}`;
+                img.src = placeholderImageUrl;
                 img.alt = "Ausgabevorschau";
 
                 outputWrapper.appendChild(img);
