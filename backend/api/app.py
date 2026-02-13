@@ -1,132 +1,83 @@
+import os
+import sys
+import subprocess
+import threading
+import time
+import webbrowser
 from flask import Flask
 from flask_cors import CORS
 from routes import detect_handler
-import webbrowser
-import threading
-import time
-import os
-import subprocess
-import sys
-import shutil
 
+def find_frontend_dir():
+    """Findet frontend/ egal wo app.py liegt - SUPER robust"""
+
+    # 1. Suche im Arbeitsverzeichnis (wo executable liegt)
+    cwd = os.getcwd()
+    candidates = [
+        os.path.join(cwd, "frontend"),
+        os.path.join(cwd, "backend", "frontend"),  # Falls falsch gepackt
+    ]
+
+    # 2. Suche relativ zu app.py/backend/
+    if not hasattr(sys, '_MEIPASS'):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        candidates.extend([
+            os.path.join(script_dir, "../frontend"),  # Development
+            os.path.join(script_dir, "../../frontend"),  # Falls tiefer
+        ])
+
+    # 3. Suche in allen Parent-Verzeichnissen
+    current = cwd
+    for _ in range(10):
+        test_path = os.path.join(current, "frontend")
+        candidates.append(test_path)
+        current = os.path.dirname(current)
+
+    for candidate in candidates:
+        if os.path.exists(candidate) and os.path.isdir(candidate) and os.path.exists(os.path.join(candidate, "package.json")):
+            print(f"✅ Frontend gefunden: {candidate}")
+            return candidate
+
+    print("❌ KEIN frontend/ Ordner gefunden!")
+    print("Suche überall...")
+    print("Verfügbare Ordner:")
+    for root, dirs, files in os.walk("/tmp" if sys.platform == "darwin" else "."):
+        if "frontend" in dirs:
+            print(f"  -> {root}/frontend")
+    return None
+
+# Rest bleibt gleich...
+def open_frontend():
+    frontend_dir = find_frontend_dir()
+    if not frontend_dir:
+        print("❌ Starte ohne Frontend")
+        return
+
+    print(f"\n🚀 Frontend: {frontend_dir}")
+
+    # npm install & dev (wie vorher)
+    node_modules = os.path.join(frontend_dir, "node_modules")
+    if not os.path.exists(node_modules):
+        print("📦 npm install...")
+        subprocess.Popen(["npm", "install"], cwd=frontend_dir)
+        time.sleep(5)
+
+    print("⚡ npm run dev...")
+    subprocess.Popen(["npm", "run", "dev"], cwd=frontend_dir, start_new_session=True)
+    time.sleep(4)
+    webbrowser.open("http://localhost:5173")
+
+# Flask App (unverändert)
 app = Flask(__name__)
 CORS(app)
 
 @app.route("/health", methods=["GET"])
-def health():
-    return "status ok"
+def health(): return "status ok"
 
 @app.route("/api/v1/detect", methods=["POST"])
-def detect():
-    """Delegiert an die Engine in routes.py"""
-    return detect_handler()
-
-def find_frontend_dir():
-    """Findet frontend Ordner - funktioniert für dev und executable"""
-    candidates = []
-
-    # 1. Versuche relatives Pfad (Development)
-    if hasattr(sys, '_MEIPASS'):  # PyInstaller executable
-        base_path = os.path.dirname(sys.executable)
-    else:
-        base_path = os.path.dirname(__file__)
-
-    candidate1 = os.path.abspath(os.path.join(base_path, "../../frontend"))
-    candidates.append(candidate1)
-
-    # 2. Suche in Parent-Verzeichnissen (für verschiedene Packaging-Layouts)
-    current = os.path.dirname(base_path)
-    for i in range(5):  # Max 5 Ebenen hoch
-        candidate = os.path.join(current, "frontend")
-        if os.path.exists(candidate):
-            candidates.append(os.path.abspath(candidate))
-        current = os.path.dirname(current)
-
-    # 3. Fallback: Suche im aktuellen Arbeitsverzeichnis
-    candidates.append("./frontend")
-
-    for candidate in candidates:
-        if os.path.exists(candidate) and os.path.isdir(candidate):
-            print(f"✅ Frontend gefunden: {candidate}")
-            return candidate
-
-    return None
-
-def open_frontend():
-    """Startet npm dev server im frontend Ordner - funktioniert für dev + executable"""
-    frontend_dir = find_frontend_dir()
-
-    if not frontend_dir:
-        print("❌ Frontend-Ordner nicht gefunden!")
-        print("Stelle sicher, dass der 'frontend' Ordner im gleichen Projekt wie app.py liegt.")
-        print("Verfügbare Pfade gesucht:")
-        candidates = []
-        if hasattr(sys, '_MEIPASS'):
-            candidates.append(os.path.dirname(sys.executable))
-        else:
-            candidates.append(os.path.dirname(__file__))
-        candidates.append(os.getcwd())
-        for path in candidates:
-            print(f"  - {path}")
-        return
-
-    print(f"\n🚀 Starte Frontend automatisch...")
-    print(f"Frontend-Ordner: {frontend_dir}")
-    print()
-
-    # 1. npm install (nur wenn node_modules fehlt)
-    node_modules = os.path.join(frontend_dir, "node_modules")
-    if not os.path.exists(node_modules):
-        print("📦 Installiere npm Dependencies...")
-        try:
-            install = subprocess.Popen(
-                ["npm", "install"],
-                cwd=frontend_dir,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                universal_newlines=True
-            )
-            stdout, stderr = install.communicate(timeout=30)  # 30s Timeout
-            if install.returncode != 0:
-                print(f"⚠️  npm install Warnung: {stderr}")
-            else:
-                print("✅ npm install erfolgreich")
-        except subprocess.TimeoutExpired:
-            print("⚠️  npm install Timeout - fahre trotzdem fort...")
-            install.kill()
-    else:
-        print("✅ node_modules bereits vorhanden")
-
-    # 2. npm run dev starten (non-blocking)
-    print("⚡ Starte Vite Dev Server (npm run dev)...")
-    dev_process = subprocess.Popen(
-        ["npm", "run", "dev"],
-        cwd=frontend_dir,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True,
-        start_new_session=True  # Wichtig für Executable: verhindert Termination
-    )
-
-    # 5 Sekunden warten bis Vite läuft
-    print("⏳ Warte auf Vite Dev Server (Port 5173)...")
-    time.sleep(5)
-
-    # 3. Browser öffnen
-    print("🌐 Öffne http://localhost:5173")
-    webbrowser.open("http://localhost:5173")
-
-    print("\n✅ Frontend läuft! Backend läuft auf http://localhost:5001")
-    print("Beende mit Ctrl+C")
+def detect(): return detect_handler()
 
 if __name__ == "__main__":
     print("Bild-Verpixelungs-App startet...")
-    print("Backend-Server auf http://localhost:5001")
-
-    # Browser-Thread starten
-    browser_thread = threading.Thread(target=open_frontend)
-    browser_thread.daemon = True
-    browser_thread.start()
-
-    # Flask Server starten
+    threading.Thread(target=open_frontend, daemon=True).start()
     app.run(host="0.0.0.0", port=5001, debug=False, use_reloader=False)
