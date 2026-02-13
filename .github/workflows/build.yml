@@ -11,83 +11,122 @@ on:
     types: [opened, reopened, edited, review_requested, ready_for_review, auto_merge_enabled]
     branches:
       - main
+
 jobs:
   build-windows:
     if: ${{ inputs.OnlyMac == false }}
     runs-on: windows-latest
     steps:
       - name: checkout-repo-content
-        uses: actions/checkout@v4 # checkout the repository content to github runner.
+        uses: actions/checkout@v4
+
       - name: setup miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
           miniconda-version: "latest"
-          python-version: 3.10.15 #install the python needed
+          python-version: 3.10.15
           auto-update-conda: true
           activate-environment: bildverpixelung
           environment-file: backend/environment-windows.yml
           use-mamba: true
+
       - name: Verify conda
         shell: bash -l {0}
         run: |
           conda info
           python --version
-      - run: conda run -n bildverpixelung python -m PyInstaller --onefile backend/api/app.py
+
+      - name: Build Windows EXE
+        shell: bash -l {0}
+        run: |
+          cd backend
+          conda run -n bildverpixelung python -m PyInstaller \
+            --onefile \
+            --add-data "templates;templates" \
+            --add-data "static;static" \
+            api/app.py
+
       - uses: actions/upload-artifact@v4
         with:
           name: Windows-build
-          path: D:\a\Bild-Verpixelung\Bild-Verpixelung\dist
+          path: backend/dist
           retention-days: 2
+
+
   build-mac:
     runs-on: macos-latest
     steps:
       - name: checkout-repo-content
-        uses: actions/checkout@v4 # checkout the repository content to github runner.
+        uses: actions/checkout@v4
+
       - name: setup miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
           miniconda-version: "latest"
-          python-version: 3.10.15 #install the python needed
+          python-version: 3.10.15
           auto-update-conda: true
           activate-environment: bildverpixelung
           environment-file: backend/environment-mac.yml
           use-mamba: true
+
       - name: Verify conda
         shell: bash -l {0}
         run: |
           conda info
           python --version
-      - run: conda run -n bildverpixelung python -m PyInstaller --onefile backend/api/app.py
+
+      - name: Build Mac Binary
+        shell: bash -l {0}
+        run: |
+          cd backend
+          conda run -n bildverpixelung python -m PyInstaller \
+            --onefile \
+            --add-data "templates:templates" \
+            --add-data "static:static" \
+            api/app.py
 
       - uses: actions/upload-artifact@v4
         with:
           name: Mac-build
-          path: /Users/runner/work/Bild-Verpixelung/Bild-Verpixelung/dist
+          path: backend/dist
           retention-days: 1
+
+
   build-linux:
     if: ${{ inputs.OnlyMac == false }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout-repo-content
-        uses: actions/checkout@v4 # checkout the repository content to github runner.
+        uses: actions/checkout@v4
+
       - name: setup miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
           miniconda-version: "latest"
-          python-version: 3.10.15 #install the python needed
+          python-version: 3.10.15
           auto-update-conda: true
           activate-environment: bildverpixelung
           environment-file: backend/environment-mac.yml
           use-mamba: true
+
       - name: Verify conda
         shell: bash -l {0}
         run: |
           conda info
           python --version
-      - run: conda run -n bildverpixelung python -m PyInstaller --onefile backend/api/app.py
+
+      - name: Build Linux Binary
+        shell: bash -l {0}
+        run: |
+          cd backend
+          conda run -n bildverpixelung python -m PyInstaller \
+            --onefile \
+            --add-data "templates:templates" \
+            --add-data "static:static" \
+            api/app.py
 
       - uses: actions/upload-artifact@v4
         with:
           name: Linux-build
-          path: /home/runner/work/Bild-Verpixelung/Bild-Verpixelung/dist
+          path: backend/dist
           retention-days: 1
