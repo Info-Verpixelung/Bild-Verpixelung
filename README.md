@@ -24,7 +24,7 @@ Note_v2: Wie ich sehe ist "**[flask_cors](https://pypi.org/project/flask-cors/)*
 >Einmalig:
 - Miniconda installieren: https://www.anaconda.com/docs/getting-started/miniconda/main
 - im Terminal "conda init" ausfuehren (je nach OS muss der command ggf. angepast werden, bei mac "conda init zsh")
-- im Terminal in den backend Ordner navigieren, dann "conda env create -f backend/environment-mac.yml" oder "conda env create -f backend/environment-windows.yml" je nach OS
+- im Terminal in den backend Ordner navigieren, dann "conda env create -f environment-mac.yml" oder "conda env create -f environment-windows.yml" je nach OS
 
 >Um das Programm auszuführen:
 - Im Terminal in backend/api navigieren
