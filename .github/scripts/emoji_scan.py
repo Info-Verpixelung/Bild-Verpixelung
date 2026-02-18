@@ -4,28 +4,47 @@ import tokenize
 from io import BytesIO
 import pathlib
 
-# Emoji regex (covers most emoji blocks)
+# Broad emoji range
 EMOJI_PATTERN = re.compile(r'[\U0001F300-\U0001FAFF\u2600-\u27BF]')
+
+# Explicit allowlist
+ALLOWED_EMOJIS = {"✓"}  # U+2713
+
 found = False
 
+
+def contains_disallowed_emoji(text):
+    for char in text:
+        if EMOJI_PATTERN.match(char) and char not in ALLOWED_EMOJIS:
+            return char
+    return None
+
+
 def scan_python(path):
-    """Scan Python files including strings for emojis, ignoring comments only."""
+    """Scan Python files including strings, ignoring comments."""
     global found
     content = path.read_bytes()
     tokens = tokenize.tokenize(BytesIO(content).readline)
 
     for token in tokens:
         if token.type == tokenize.COMMENT:
-            continue  # skip comments
-        if EMOJI_PATTERN.search(token.string):
-            print(f"Emoji found in Python code: {path} (line {token.start[0]})")
+            continue  # Ignore comments
+
+        bad = contains_disallowed_emoji(token.string)
+        if bad:
+            print(
+                f"Disallowed emoji '{bad}' found in Python file: "
+                f"{path} (line {token.start[0]})"
+            )
             found = True
+
 
 def strip_js_comments(code):
     """Strip JavaScript comments but keep strings intact."""
     result = []
     i = 0
     length = len(code)
+
     while i < length:
         if code[i:i+2] == "//":
             i += 2
@@ -39,17 +58,25 @@ def strip_js_comments(code):
         else:
             result.append(code[i])
             i += 1
+
     return "".join(result)
 
+
 def scan_js(path):
-    """Scan JS files including strings for emojis, ignoring comments."""
+    """Scan JS files including strings, ignoring comments."""
     global found
     code = path.read_text(encoding="utf-8", errors="ignore")
     stripped = strip_js_comments(code)
+
     for lineno, line in enumerate(stripped.splitlines(), 1):
-        if EMOJI_PATTERN.search(line):
-            print(f"Emoji found in JavaScript code: {path} (line {lineno})")
+        bad = contains_disallowed_emoji(line)
+        if bad:
+            print(
+                f"Disallowed emoji '{bad}' found in JavaScript file: "
+                f"{path} (line {lineno})"
+            )
             found = True
+
 
 def main(file_list_path):
     with open(file_list_path) as f:
@@ -66,13 +93,15 @@ def main(file_list_path):
             print(f"Error processing {file_path}: {e}")
 
     if found:
-        print("Emojis are not allowed in code (including strings).")
+        print("Emojis are not allowed in code (except ✓).")
         sys.exit(1)
     else:
-        print("No emojis found in code.")
+        print("No disallowed emojis found.")
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python emoji_scan.py <file_list.txt>")
         sys.exit(1)
+
     main(sys.argv[1])
