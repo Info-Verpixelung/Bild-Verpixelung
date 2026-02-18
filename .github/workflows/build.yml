@@ -39,7 +39,7 @@ jobs:
         shell: bash -l {0}
         run: |
           cd backend
-          conda run -n bildverpixelung python -m PyInstaller --onefile \
+          conda run -n bildverpixelung python -m PyInstaller --name app-Windows --onefile \
             --onefile \
             --add-data "templates;templates" \
             --add-data "static;static" \
@@ -78,7 +78,7 @@ jobs:
         shell: bash -l {0}
         run: |
           cd backend
-          conda run -n bildverpixelung python -m PyInstaller --onefile \
+          conda run -n bildverpixelung python -m PyInstaller --name app-Mac --onefile \
             --onefile \
             --add-data "templates:templates" \
             --add-data "static:static" \
@@ -118,7 +118,7 @@ jobs:
         shell: bash -l {0}
         run: |
           cd backend
-          conda run -n bildverpixelung python -m PyInstaller --onefile \
+          conda run -n bildverpixelung python -m PyInstaller --name app-Linux --onefile \
             --onefile \
             --add-data "templates:templates" \
             --add-data "static:static" \
