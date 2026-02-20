@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Image Anonymizer</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/favicons/favicon-96x96.png') }}" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicons/favicon.svg') }}" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicons/favicon.ico') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/favicons/apple-touch-icon.png') }}" />
+    <meta name="apple-mobile-web-app-title" content="IMGANO" />
+    <link rel="manifest" href="{{ url_for('static', filename='icons/favicons/site.webmanifest') }}" />
+</head>
+
+<body class="dark-mode">
+<div class="theme-switch-wrapper">
+    <label class="theme-switch" for="checkbox">
+        <input type="checkbox" id="checkbox" />
+        <div class="slider round">
+            <div class="slider-knob">
+                <img src="{{ url_for('static', filename='icons/sun.png') }}" alt="Light Mode Icon" id="light-mode-icon" class="theme-icon">
+                <img src="{{ url_for('static', filename='icons/moon.png') }}" alt="Dark Mode Icon" id="dark-mode-icon" class="theme-icon">
+            </div>
+        </div>
+    </label>
+</div>
+
+<div class="container">
+    <header>
+        <h1>Secure Image Anonymizer</h1>
+        <p>Laden Sie Bilder hoch, um bestimmte Bereiche sicher und irreversibel zu anonymisieren.</p>
+    </header>
+
+    <main>
+        <div class="upload-section">
+            <h2>Bilder hochladen</h2>
+            <div class="drop-zone">
+                <p>Ziehen Sie Ihre Bilder hierher oder klicken Sie, um sie auszuwählen (maximal 10).</p>
+                <input type="file" id="file-input" accept="image/*" multiple>
+            </div>
+        </div>
+
+        <div class="preview-section">
+            <div class="section-header">
+                <h2>Vorschau</h2>
+                <button id="delete-all-button" class="delete-all-button" title="Alle Bilder löschen">
+                    <span class="delete-all-icon">🗑️</span>
+                    <span class="delete-all-text">Alle löschen</span>
+                </button>
+            </div>
+
+            <div class="image-preview-grid" id="image-preview-grid">
+                <span class="image-preview-text">Hier werden Ihre Bildvorschauen angezeigt.</span>
+            </div>
+
+            <div class="control-group">
+                <h3>Was soll erkannt werden?</h3>
+                <select id="censorship-subject">
+                    <option value="faces">Gesichter</option>
+                    <option value="eyes">Nur Augen (Balken)</option>
+                    <option value="body">Ganzer Körper</option>
+                </select>
+            </div>
+
+            <button id="preview-button" class="preview-button" disabled>
+                Bilder verarbeiten (Preview)
+            </button>
+        </div>
+
+        <div class="output-section">
+            <h2>Anonymisierte Bilder</h2>
+
+            <div class="image-preview-grid" id="output-preview-grid">
+                <span class="image-preview-text">Hier werden Ihre anonymisierten Bilder angezeigt.</span>
+            </div>
+
+            <div class="control-group">
+                <h3>Anonymisierungsart</h3>
+                <select id="anonymization-type">
+                    <option value="pixelate">Verpixeln</option>
+                    <option value="blur">Weichzeichnen</option>
+                    <option value="blacken">Schwärzen</option>
+                </select>
+            </div>
+
+            <button id="process-button" disabled>Bilder verarbeiten</button>
+            <button id="download-button" disabled>Herunterladen</button>
+        </div>
+    </main>
+</div>
+
+<!-- Drag and Drop Overlay -->
+<div class="drag-drop-overlay" id="drag-drop-overlay">
+    <div class="drag-drop-content">
+        <div class="drag-drop-icon">📁</div>
+        <div class="drag-drop-text">Dateien hier ablegen</div>
+        <div class="drag-drop-subtext">Bis zu 10 Bilder</div>
+    </div>
+</div>
+
+<!-- Image Lightbox Modal -->
+<div class="lightbox-modal" id="lightbox-modal">
+    <button class="lightbox-close" id="lightbox-close" title="Schließen (ESC)">&times;</button>
+    <button class="lightbox-nav lightbox-prev" id="lightbox-prev" title="Vorheriges Bild (←)">‹</button>
+    <button class="lightbox-nav lightbox-next" id="lightbox-next" title="Nächstes Bild (→)">›</button>
+
+    <div class="lightbox-content">
+        <img id="lightbox-image" src="" alt="Große Ansicht">
+        <div class="lightbox-counter" id="lightbox-counter">1 / 1</div>
+    </div>
+</div>
+
+<script type="module" src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

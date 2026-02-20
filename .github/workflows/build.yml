@@ -1,0 +1,131 @@
+name: Build-EXE
+on:
+  workflow_dispatch:
+    inputs:
+      OnlyMac:
+        description: 'Only generate mac binary'
+        required: false
+        default: false
+        type: boolean
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-windows:
+    if: ${{ inputs.OnlyMac == false }}
+    runs-on: windows-latest
+    steps:
+      - name: checkout-repo-content
+        uses: actions/checkout@v4
+
+      - name: setup miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniconda-version: "latest"
+          python-version: 3.10.15
+          auto-update-conda: true
+          activate-environment: bildverpixelung
+          environment-file: backend/environment-windows.yml
+          use-mamba: true
+
+      - name: Verify conda
+        shell: bash -l {0}
+        run: |
+          conda info
+          python --version
+
+      - name: Build Windows EXE
+        shell: bash -l {0}
+        run: |
+          cd backend
+          conda run -n bildverpixelung python -m PyInstaller --onefile \
+            --onefile \
+            --add-data "templates;templates" \
+            --add-data "static;static" \
+            api/app.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Windows-build
+          path: backend/dist
+          retention-days: 2
+
+
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - name: checkout-repo-content
+        uses: actions/checkout@v4
+
+      - name: setup miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniconda-version: "latest"
+          python-version: 3.10.15
+          auto-update-conda: true
+          activate-environment: bildverpixelung
+          environment-file: backend/environment-mac.yml
+          use-mamba: true
+
+      - name: Verify conda
+        shell: bash -l {0}
+        run: |
+          conda info
+          python --version
+
+      - name: Build Mac Binary
+        shell: bash -l {0}
+        run: |
+          cd backend
+          conda run -n bildverpixelung python -m PyInstaller --onefile \
+            --onefile \
+            --add-data "templates:templates" \
+            --add-data "static:static" \
+            api/app.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Mac-build
+          path: backend/dist
+          retention-days: 1
+
+
+  build-linux:
+    if: ${{ inputs.OnlyMac == false }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout-repo-content
+        uses: actions/checkout@v4
+
+      - name: setup miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniconda-version: "latest"
+          python-version: 3.10.15
+          auto-update-conda: true
+          activate-environment: bildverpixelung
+          environment-file: backend/environment-mac.yml
+          use-mamba: true
+
+      - name: Verify conda
+        shell: bash -l {0}
+        run: |
+          conda info
+          python --version
+
+      - name: Build Linux Binary
+        shell: bash -l {0}
+        run: |
+          cd backend
+          conda run -n bildverpixelung python -m PyInstaller --onefile \
+            --onefile \
+            --add-data "templates:templates" \
+            --add-data "static:static" \
+            api/app.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Linux-build
+          path: backend/dist
+          retention-days: 1

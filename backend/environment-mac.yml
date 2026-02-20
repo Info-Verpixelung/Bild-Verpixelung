@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - pyinstaller=6.18.0
   - _openmp_mutex=4.5
   - bzip2=1.0.8
   - ca-certificates=2026.1.4
@@ -64,4 +65,5 @@ dependencies:
       - jinja2==3.1.6
       - markupsafe==3.0.3
       - werkzeug==3.1.5
+      - pywebview==6.1
 prefix: /opt/homebrew/Caskroom/miniconda/base/envs/bildverpixelung
