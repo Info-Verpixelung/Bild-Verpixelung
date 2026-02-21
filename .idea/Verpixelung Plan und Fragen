@@ -1,6 +1,42 @@
-Plan:
 Grobes Vorgehen: 
-- erst Verpixelung implementieren, dann schwarzer Balken über den Augen. (evtl. paralleler Arbeiten Ludiwg- Elisabeth)
+- erst Verpixelung implementieren, dann schwarzer Balken über den Augen. (evtl. paralleles Arbeiten Ludiwg- Elisabeth)
+- + Recherche über Anonymisierungsarten (wie werden sie technisch umgesetzt und wie sicher sind sie, v.A. auch mit KI?)
+______________________________________________________________________________________________
+RECHERCHEERGEBNISSE 
+
+Verpixelung: 
+Generell: 
+- Joa, Verpixelung halt kennt man ja, ne?
+Umsetzung: 
+- Durchschnittswerte der Pixel in bestimmten Bereich berechnen
+Sicherheit/ Bewertung: 
+- Hängt sehr von Pixelgröße ab
+- Wenn Pixel groß genug (15-20 pixel^2 zu einem Pixel): Sicherer als Gauß, auch bei moderner KI
+- Fazit der Website: "Für kritische Datenschutzanwendungen bleibt die Verwendung ausreichend großer Pixelblöcke eine zuverlässige Anonymisierungsmethode"
+
+Gaußscher- Weichzeichnungs-Algorithmus (= Gaussian Blur): 
+Generell
+- Reduziert Schärfe und Details in einem Bild; glättet die Übergänge zwischen den Pixeln. 
+- Mathematische Funktion, die Pixelwerte basierend auf einer Normalverteilungskurve verteilt. 
+- Erzeugt einen weichen, allmählich verblassenden Effekt, der Details verschleiert, während allgemeine Form und Farbe von Objekten erhalten bleibt.
+Umsetzung: 
+- Software berechnet neue Werte für jedes Pixel basierend auf den umgebenden Pixeln. 
+- Unschärfewert bestimmt Radius oder Stärke dieses Effekts - höhere Werte erzeugen ein verschwommeneres Erscheinungsbild, indem Pixelwerte über einen größeren Bereich gemittelt werden.
+=> vermutlich nicht so einfach selbst zu implementieren (weil Normalverteilungskurve) => daher hier nach Vorlagen suchen
+Sicherheit/ Bewertung: 
+- Oft "schöner", da generelle Form des Bildes beibehalten wird (Kanten werden nur weichgezeichnet, bleiben aber an der selben Stelle) 
+- Sicherheit sehr stark abhängig von Unschärfeparameter
+- Risiko: weil ungefähre Form beibehalten wird, anfälliger für KI, die Anonymisierung rückgänig machen kann 
+- Für Anonymisierung von Gesichtern: Gauß'scher Weichzeichnungsradius von mindestens 8-10 Pixeln für grundlegenden Datenschutz erforderlich;
+höhere Werte (15-20 Pixel) für sensiblere Anwendungen oder bei hochauflösenden Bildern empfohlen. (Sehr abhängig von Bildgröße!)
+
+=> SICHERHEITSTECHNISCH EHER VERPIXELUNG ALS GAUß EMPFOHLEN. (auch schneller zu Berechnen). ABER MANCHMAL GAUß SCHÖNER, DAHER: WIR WOLLEN BEIDES IMPLEMENTIEREN
+
+Quelle: https://gallio.pro/de/blog/unscharfe-oder-pixelierung-ein-technischer-leitfaden-zum-datenschutz-bei-der-bildverarbeitung/ (letzter Zugriff: 21. 02. 26)
+
+
+ÜBERLEGUNG, DAMIT SICHERHEIT NICHT ABHÄNGIG VON PIXELGRÖßE IST: 
+Feste Anzahl an Pixeln, zu denen jedes Gesicht (unabhängig von der Anzahl an Pixeln, aus dem es ursprünglich bestand) wird. Ähnlich bei Gauß. 
 ______________________________________________________________________________________________
 
 Q&A (Antworten nach erst eigener Überlegung/ Recherche, dann Absprache mit dem Team):
