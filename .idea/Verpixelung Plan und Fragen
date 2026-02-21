@@ -1,12 +1,7 @@
 Plan:
 Grobes Vorgehen: 
 - erst Verpixelung implementieren, dann schwarzer Balken über den Augen. (evtl. paralleler Arbeiten Ludiwg- Elisabeth)
-
-Zur Implementierung/ Funktionsweise
-- Dummy-Bild mit manuell übergebener Test-Verpixelungs-Area importieren (Format: NumPy)
-- in Verpixelung reinlesen (???)
-- Funktion dafür schreiben, testen (auch mit mehreren Verpixelungs-Areas)
-
+______________________________________________________________________________________________
 
 Q&A (Antworten nach erst eigener Überlegung/ Recherche, dann Absprache mit dem Team):
 Q: Schwarzer Balken: ganzes Gesicht oder schwarzer Balken nur über den Augen (o.ä.)?
@@ -15,10 +10,27 @@ A: Finale Funktion sollte nur über den Augen sein
 
 Q: Verpixelung: Feste Pixelgröße oder feste Pixelanzahl?
 A: Damit die Auflösung des Bildes keine Rolle spielt, und die Anonymisierung in jedem Fall gewährleistet ist: feste Pixelanzahl
+______________________________________________________________________________________________
 
+Zur Implementierung: Struktur
+- Je eine Methode (Funktionen? wie heißt das in Python) für jede verschiedene Anonymisierungsart, je nach Nutzereinstellungen wird dann die entsprechende aufgerufen 
+(diese Entscheidungsstruktur wird später folgen, jetzt erst einmal: schreiben der einzelnen  Methoden)
+- Jede Methode benötigt zum Laufen das Bild im NumPy-Format und die Bouding Box (Koordinaten der ECKEN) und gibt dann das GANZE Bild mitsamt Verädnerung zurück
 
-Anforderungen verpixelung:
-- bekommen den bereich der verpixelung & Bilddatei als NumPy
-- funktion muss die Pixel im Bereich einteilen, durchschnitt berechnen und alle pixel in dem bereich auf den durchschnitt ändern
+// Idk what this was 
+(Erst: Dummy-)Bild mit manuell übergebener Test-Verpixelungs-Area importieren (Format: NumPy)
+- in Verpixelung reinlesen (??? was haben wir damit gemeint?)
+- Funktion dafür schreiben, testen (auch mit mehreren Verpixelungs-Areas)
+//
+
+__________________________________________________________________________________________
+Konkrete Implementierung "Verpixelung"
+- bekommt den Bereich der Berpixelung (= Bounding Box) & Bilddatei als NumPy
+
+0. (nicht sicher zur Reihenfolge) Abhängig von einer statisch gegebenen Zahl an Pixeln, daus dem das Gesicht später bestehen soll, wird berechnet, wie viele Pixel des Bildes je zu einem großen Pixel werden sollen. (Temporäres Speichern des Wertes in Variable)
+1. Funktion teilt die Pixel im Bounding-Box-Bereich in größere Bereiche ein, die jeweils "zu einem Pixel" werden (benötigt daher den in 0. berechneten Wert)
+2. Für jeden dieser Bereiche wird der Durchschnitt der der Rot-, Grün- und Blauwerte berechnet. 
+3. Alle Pixel in dem Bereich werden auf den Durchschnitt gesetzt 
+4. Das veränderte Bild wird zurückgegeben
 
 - anzahl der bereiche auf variable setzen (15-20 sind optimal)
