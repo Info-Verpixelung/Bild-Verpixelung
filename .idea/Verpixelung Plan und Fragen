@@ -1,20 +1,24 @@
 Plan:
-- erst Verpixelung, dann schwarzer balken (siehe Fragen)
-- Dummy-bild mit test-verpixelungs-Area importieren
-- in Verpixelung reinlesen
-- funktion dafür schreiben, testen (auch mit mehreren Verpixelungs-Areas)
+Grobes Vorgehen: 
+- erst Verpixelung implementieren, dann schwarzer Balken über den Augen. (evtl. paralleler Arbeiten Ludiwg- Elisabeth)
+
+Zur Implementierung/ Funktionsweise
+- Dummy-Bild mit manuell übergebener Test-Verpixelungs-Area importieren (Format: NumPy)
+- in Verpixelung reinlesen (???)
+- Funktion dafür schreiben, testen (auch mit mehreren Verpixelungs-Areas)
 
 
-Fragen:
+Q&A (Antworten nach erst eigener Überlegung/ Recherche, dann Absprache mit dem Team):
+Q: Schwarzer Balken: ganzes Gesicht oder schwarzer Balken nur über den Augen (o.ä.)?
+(nur schwarzer Balken könnte schwer werden mit unserer Funktionsweise, man müsste schon vor dem Einsenden des Bilds wissen, ob man schwarzen balken oder verpixelung macht)
+A: Finale Funktion sollte nur über den Augen sein
 
-Schwarzer Balken: ganzes Gesicht oder schwarzer Balken nur über den Augen (o.ä.)?
--> nur schwarzer Balken könnte schwer werden mit unserer Funktionsweise, man müsste schon vor dem Einsenden des Bilds wissen, ob man schwarzen balken oder verpixelung macht
-
-Verpixelung: Feste Pixelgröße oder feste Pixelanzahl?
+Q: Verpixelung: Feste Pixelgröße oder feste Pixelanzahl?
+A: Damit die Auflösung des Bildes keine Rolle spielt, und die Anonymisierung in jedem Fall gewährleistet ist: feste Pixelanzahl
 
 
 Anforderungen verpixelung:
-- bekommen den bereich der verpixelung & Bilddatei als Base64
+- bekommen den bereich der verpixelung & Bilddatei als NumPy
 - funktion muss die Pixel im Bereich einteilen, durchschnitt berechnen und alle pixel in dem bereich auf den durchschnitt ändern
 
 - anzahl der bereiche auf variable setzen (15-20 sind optimal)
