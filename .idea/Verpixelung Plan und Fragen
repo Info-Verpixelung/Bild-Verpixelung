@@ -1,0 +1,79 @@
+Grobes Vorgehen: 
+- erst Verpixelung implementieren, dann schwarzer Balken über den Augen. (evtl. paralleles Arbeiten Ludiwg- Elisabeth)
+- + Recherche über Anonymisierungsarten (wie werden sie technisch umgesetzt und wie sicher sind sie, v.A. auch mit KI?)
+______________________________________________________________________________________________
+RECHERCHEERGEBNISSE 
+
+Verpixelung: 
+Generell: 
+- Joa, Verpixelung halt kennt man ja, ne?
+Umsetzung: 
+- Durchschnittswerte der Pixel in bestimmten Bereich berechnen
+Sicherheit/ Bewertung: 
+- Hängt sehr von Pixelgröße ab
+- Wenn Pixel groß genug (15-20 pixel^2 zu einem Pixel): Sicherer als Gauß, auch bei moderner KI
+- Fazit der Website: "Für kritische Datenschutzanwendungen bleibt die Verwendung ausreichend großer Pixelblöcke eine zuverlässige Anonymisierungsmethode"
+
+Gaußscher- Weichzeichnungs-Algorithmus (= Gaussian Blur): 
+Generell
+- Reduziert Schärfe und Details in einem Bild; glättet die Übergänge zwischen den Pixeln. 
+- Mathematische Funktion, die Pixelwerte basierend auf einer Normalverteilungskurve verteilt. 
+- Erzeugt einen weichen, allmählich verblassenden Effekt, der Details verschleiert, während allgemeine Form und Farbe von Objekten erhalten bleibt.
+Umsetzung: 
+- Software berechnet neue Werte für jedes Pixel basierend auf den umgebenden Pixeln. 
+- Unschärfewert bestimmt Radius oder Stärke dieses Effekts - höhere Werte erzeugen ein verschwommeneres Erscheinungsbild, indem Pixelwerte über einen größeren Bereich gemittelt werden.
+=> vermutlich nicht so einfach selbst zu implementieren (weil Normalverteilungskurve) => daher hier nach Vorlagen suchen
+Sicherheit/ Bewertung: 
+- Oft "schöner", da generelle Form des Bildes beibehalten wird (Kanten werden nur weichgezeichnet, bleiben aber an der selben Stelle) 
+- Sicherheit sehr stark abhängig von Unschärfeparameter
+- Risiko: weil ungefähre Form beibehalten wird, anfälliger für KI, die Anonymisierung rückgänig machen kann 
+- Für Anonymisierung von Gesichtern: Gauß'scher Weichzeichnungsradius von mindestens 8-10 Pixeln für grundlegenden Datenschutz erforderlich;
+höhere Werte (15-20 Pixel) für sensiblere Anwendungen oder bei hochauflösenden Bildern empfohlen. (Sehr abhängig von Bildgröße!)
+
+=> SICHERHEITSTECHNISCH EHER VERPIXELUNG ALS GAUß EMPFOHLEN. (auch schneller zu Berechnen). ABER MANCHMAL GAUß SCHÖNER, DAHER: WIR WOLLEN BEIDES IMPLEMENTIEREN
+
+Quelle: https://gallio.pro/de/blog/unscharfe-oder-pixelierung-ein-technischer-leitfaden-zum-datenschutz-bei-der-bildverarbeitung/ (letzter Zugriff: 21. 02. 26)
+
+
+ÜBERLEGUNG, DAMIT SICHERHEIT NICHT ABHÄNGIG VON PIXELGRÖßE IST: 
+Feste Anzahl an Pixeln, zu denen jedes Gesicht (unabhängig von der Anzahl an Pixeln, aus dem es ursprünglich bestand) wird. Ähnlich bei Gauß. 
+______________________________________________________________________________________________
+
+Q&A (Antworten nach erst eigener Überlegung/ Recherche, dann Absprache mit dem Team):
+Q: Schwarzer Balken: ganzes Gesicht oder schwarzer Balken nur über den Augen (o.ä.)?
+(nur schwarzer Balken könnte schwer werden mit unserer Funktionsweise, man müsste schon vor dem Einsenden des Bilds wissen, ob man schwarzen balken oder verpixelung macht)
+A: Finale Funktion sollte nur über den Augen sein
+
+Q: Verpixelung: Feste Pixelgröße oder feste Pixelanzahl?
+A: Damit die Auflösung des Bildes keine Rolle spielt, und die Anonymisierung in jedem Fall gewährleistet ist: feste Pixelanzahl
+______________________________________________________________________________________________
+
+Zur Implementierung: Struktur
+- Je eine Methode (Funktionen? wie heißt das in Python) für jede verschiedene Anonymisierungsart, je nach Nutzereinstellungen wird dann die entsprechende aufgerufen 
+(diese Entscheidungsstruktur wird später folgen, jetzt erst einmal: schreiben der einzelnen  Methoden)
+- Jede Methode benötigt zum Laufen das Bild im NumPy-Format und die Bouding Box (Koordinaten der ECKEN) und gibt dann das GANZE Bild mitsamt Verädnerung zurück
+
+Vorwissen/ Grundlage: Bilddarstellung durch NumPy-Arrays (Verständnis, wie die Bilder dargestellt werden ist wichtig, um sie bearbeiten zu können):
+- Farbbilder werden als dreidimensionale Listen gespeichert, d.h. jeder Eintrag in der Liste ist durch drei Indices (Indexes?) bestimmt 
+1. Index: Höhe des Bildes (geht von 0 bis Anzahl Pixel, die in die Höhe gehen)
+2. Index: Breite (geht von 0 bis Anzahl Pixel, die in die Breite gehen)
+3. Index: Anzahl Farben (von 0 bis 1 bei SW- Bildern, von 0 bis 2 bei Farbbildern, wobei 0 = Rot-Wert, 1 = Grün-Wert, 2 = Blau-Wert)
+=> Jeder Eintrag besteht aus einer Zahl von 0 bis 255, wobei die ersten beiden Indices ihn im Bild verorten (entsprechen seinem Pixel) und der letzte Eintrag bestimmt, ob der Wert den Rot-, Blau- oder Grünwert repräsentiert
+
+// Idk what this was 
+(Erst: Dummy-)Bild mit manuell übergebener Test-Verpixelungs-Area importieren (Format: NumPy)
+- in Verpixelung reinlesen (??? was haben wir damit gemeint?)
+- Funktion dafür schreiben, testen (auch mit mehreren Verpixelungs-Areas)
+//
+
+__________________________________________________________________________________________
+Konkrete Implementierung "Verpixelung"
+- bekommt den Bereich der Berpixelung (= Bounding Box) & Bilddatei als NumPy
+
+0. (nicht sicher zur Reihenfolge) Abhängig von einer statisch gegebenen Zahl an Pixeln, daus dem das Gesicht später bestehen soll, wird berechnet, wie viele Pixel des Bildes je zu einem großen Pixel werden sollen. (Temporäres Speichern des Wertes in Variable)
+1. Funktion teilt die Pixel im Bounding-Box-Bereich in größere Bereiche ein, die jeweils "zu einem Pixel" werden (benötigt daher den in 0. berechneten Wert)
+2. Für jeden dieser Bereiche wird der Durchschnitt der der Rot-, Grün- und Blauwerte berechnet. 
+3. Alle Pixel in dem Bereich werden auf den Durchschnitt gesetzt 
+4. Das veränderte Bild wird zurückgegeben
+
+- anzahl der bereiche auf variable setzen (15-20 sind optimal)

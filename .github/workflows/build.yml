@@ -39,7 +39,7 @@ jobs:
         shell: bash -l {0}
         run: |
           cd backend
-          conda run -n bildverpixelung python -m PyInstaller --onefile \
+          conda run -n bildverpixelung python -m PyInstaller --name app-Windows --onefile \
             --onefile \
             --collect-data face_recognition_models \
             --hidden-import face_recognition_models \
@@ -51,7 +51,7 @@ jobs:
         with:
           name: Windows-build
           path: backend/dist
-          retention-days: 2
+          retention-days: 1
 
 
   build-mac:
@@ -80,7 +80,7 @@ jobs:
         shell: bash -l {0}
         run: |
           cd backend
-          conda run -n bildverpixelung python -m PyInstaller --onefile \
+          conda run -n bildverpixelung python -m PyInstaller --name app-Mac --onefile \
             --onefile \
             --collect-data face_recognition_models \
             --hidden-import face_recognition_models \
@@ -122,7 +122,7 @@ jobs:
         shell: bash -l {0}
         run: |
           cd backend
-          conda run -n bildverpixelung python -m PyInstaller --onefile \
+          conda run -n bildverpixelung python -m PyInstaller --name app-Linux --onefile \
             --onefile \
             --collect-data face_recognition_models \
             --hidden-import face_recognition_models \
