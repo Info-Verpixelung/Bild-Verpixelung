@@ -4,6 +4,10 @@ import io
 from PIL import Image
 import logging
 
+from engine.image_adapter import piltonp
+from engine.detector import detect
+
+
 # Logging einrichten (wird automatisch im Flask-Debug-Modus angezeigt)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -79,17 +83,25 @@ def detect_handler():
 
     try:
         # 1. Bild decodieren
-        image = decode_data_url(image_data_url)
-        width, height = image.size
+        #image = decode_data_url(image_data_url)
+        #width, height = image.size
+        image = decode_data_url(image_data_url)  # PIL image
+        np_img = piltonp(image)               # -> numpy array
 
         # 2. Detection ausführen (aktuell Dummy)
-        objects = detect_objects_stub(image, subject, width, height)
+        #objects = detect_objects_stub(image, subject, width, height)
+        objects = detect(np_img, subject)
 
-        # 3. Erfolgreiche Response
+    # 3. Erfolgreiche Response
+        #response = {
+        #    "status": "success",
+        #    "message": f"Detection complete for {filename} ({len(objects)} objects found)",
+        #    "objects": objects
+        #}
         response = {
             "status": "success",
-            "message": f"Detection complete for {filename} ({len(objects)} objects found)",
-            "objects": objects
+            "message": f"Detection complete for {filename}, {len(objects)} objects found",
+            "objects": objects,
         }
 
         logger.info(f"SUCCESS: {len(objects)} Objekte für {filename}")
