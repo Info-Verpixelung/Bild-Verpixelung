@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 from flask_cors import CORS
-from routes import detect_handler
+from api.routes import detect_handler
 import webbrowser
 import threading
 import time
