@@ -12,6 +12,7 @@ dependencies:
   - dlib=19.24.2
   - face_recognition=1.3.0
   - pyinstaller=6.18.0
+  - pkg_resources
   - pip
   - pip:
       - blinker==1.9.0
