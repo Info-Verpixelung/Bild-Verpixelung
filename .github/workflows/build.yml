@@ -80,6 +80,8 @@ jobs:
           cd backend
           conda run -n bildverpixelung python -m PyInstaller --onefile \
             --onefile \
+            --collect-data face_recognition_models \
+            --hidden-import face_recognition_models \
             --add-data "templates:templates" \
             --add-data "static:static" \
             api/app.py
