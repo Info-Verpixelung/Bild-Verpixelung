@@ -21,3 +21,4 @@ dependencies:
       - markupsafe==3.0.3
       - werkzeug==3.1.5
       - pywebview==6.1
+      - git+https://github.com/ageitgey/face_recognition_models
