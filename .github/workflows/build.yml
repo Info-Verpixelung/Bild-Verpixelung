@@ -49,7 +49,7 @@ jobs:
         with:
           name: Windows-build
           path: backend/dist
-          retention-days: 2
+          retention-days: 1
 
 
   build-mac:
