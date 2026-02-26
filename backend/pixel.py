@@ -29,8 +29,8 @@ print(image_array)
 #____________________________________________________________________________
 # IMG-AUFTEILUNG
 # Festlegung der Anzahl der "Blöcke" (statisch)
-num_pixelation_x = 20
-num_pixelation_y = 20
+num_pixelation_x = 10
+num_pixelation_y = 10
 
 # Höhe und breite des Bildes in Variablen speichern 
 #height, width = image_array.shape[:2]
@@ -42,23 +42,15 @@ num_pixelation_y = 20
 # eigentliche Veränderung 
 #def changeImage(num_pixelation_x, num_pixelation_y, pix_area_width, pix_area_height):
 
-def pixelate(image: np.ndarray, block_size: int) -> np.ndarray:
+# Wichtig: Variable 'Block' beztieht sich immer auf das, was ein Pixel wird. 'Box' bezieht sich auf den Input, also die Boudning Box, d.h. den ganzen Bereich 
+def pixelate(image: np.ndarray) -> np.ndarray:
     # Höhe und breite des Bildes in Variablen speichern 
     height, width = image.shape[:2]
 
     # Größe der "Pixel-Blöcke" berechnen (lieber direkt in change_image?)
     height_block_pix = height // num_pixelation_x
     width_block_pix = width // num_pixelation_y
-    """
-    Pixelates an image using block averaging.
-
-    Parameters:
-        image (np.ndarray): Input image (H, W, 3)
-        block_size (int): Size of square block
-
-    Returns:
-        np.ndarray: Pixelated image
-    """
+    
     #h, w, c = image.shape
     output = image.copy()
 
@@ -77,7 +69,12 @@ def pixelate(image: np.ndarray, block_size: int) -> np.ndarray:
             output[y:y+height_block_pix, x:x+width_block_pix] = mean_color
 
     #Frage: wie Bild zurückgeben? Wie handeln, dass nur ein Teil verpixelt werden soll? (Lösung: nicht bei 0 anfangen? Eig. Wäre Funktion, die Anfangswert als Parameter kriegt besser)
-    # wie mehrere Gesichter handeln?       
+    # wie mehrere Gesichter handeln?     
+    print("ich bin hier angekommen")  
     return output.astype(np.uint8)
+
+img = Image.fromarray(pixelate(image_array))
+img.show()
+
 
 #print(image_array[0])
