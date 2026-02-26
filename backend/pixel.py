@@ -43,20 +43,26 @@ num_pixelation_y = 10
 #def changeImage(num_pixelation_x, num_pixelation_y, pix_area_width, pix_area_height):
 
 # Wichtig: Variable 'Block' beztieht sich immer auf das, was ein Pixel wird. 'Box' bezieht sich auf den Input, also die Boudning Box, d.h. den ganzen Bereich 
-def pixelate(image: np.ndarray) -> np.ndarray:
+def pixelate(image: np.ndarray, box_middle_x: int, box_middle_y: int, box_width: int, box_height:int ) -> np.ndarray:
     # Höhe und breite des Bildes in Variablen speichern 
     height, width = image.shape[:2]
 
+    # Koordinaten der Box so umwandeln, dass sie linke obere und rechte untere ecke angeben können
+    box_left = box_middle_x - box_width
+    box_right = box_middle_x + box_width
+    box_up = box_middle_y - box_height
+    box_down = box_middle_y + box_height
+
     # Größe der "Pixel-Blöcke" berechnen (lieber direkt in change_image?)
-    height_block_pix = height // num_pixelation_x
-    width_block_pix = width // num_pixelation_y
+    width_block_pix = (box_right - box_left) // num_pixelation_x
+    height_block_pix = (box_down - box_up) // num_pixelation_y
     
     #h, w, c = image.shape
     output = image.copy()
 
     #Aufteilen in Blöcke (Erstellen je eines Blockes, fängt bei 0 an, Schrittgröße height/ width_block_pix, macht so viele Schritte bis Rand erreicht)
-    for y in range(0, height, height_block_pix):
-        for x in range(0, width, width_block_pix):
+    for y in range(box_up, (box_down - box_up), height_block_pix):
+        for x in range(box_left, (box_right - box_left), width_block_pix):
             #Block ausschneiden (array slicing)
             block = image[y:y+height_block_pix, x:x+width_block_pix]
             
@@ -73,7 +79,7 @@ def pixelate(image: np.ndarray) -> np.ndarray:
     print("ich bin hier angekommen")  
     return output.astype(np.uint8)
 
-img = Image.fromarray(pixelate(image_array))
+img = Image.fromarray(pixelate(image_array, 70, 100, 50, 50))
 img.show()
 
 
