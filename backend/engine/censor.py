@@ -23,7 +23,7 @@ print(f"Bildgröße: {width}x{height}")
 # oder direkt in numpy konvertieren (z.b. für opencv)
 import numpy as np
 image_array = np.array(image)
-print(image_array)
+#print(image_array)
 #print(image_array[0])
 
 #____________________________________________________________________________
