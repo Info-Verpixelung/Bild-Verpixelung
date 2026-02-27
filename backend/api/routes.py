@@ -4,9 +4,10 @@ import io
 from PIL import Image
 import logging
 
-from engine.image_adapter import piltonp
+from engine.image_adapter import piltonp, nptopil
 from engine.detector import detect
-
+from engine.censor import censor
+from schemas import CensorMode
 
 # Logging einrichten (wird automatisch im Flask-Debug-Modus angezeigt)
 logging.basicConfig(level=logging.INFO)
@@ -114,3 +115,31 @@ def detect_handler():
             "message": f"Processing failed: {str(e)}",
             "objects": []
         }), 500
+
+@app.route("/api/v1/censor", methods=["POST"])
+def censor_handler():
+    data = request.get_json()
+    required = ["image", "boxes", "mode"]
+    missing = [f for f in required if not data.get(f)]
+    if missing:
+        return jsonify({"status": "error", "message": f"Missing: {', '.join(missing)}"}), 400
+
+    try:
+        pil_image = decodedataurl(data["image"])
+        np_image = piltonp(pil_image)
+        censored_np = censor(np_image, data["boxes"], data["mode"])
+        censored_pil = nptopil(censored_np)
+
+        buffer = io.BytesIO()
+        censored_pil.save(buffer, format="PNG", optimize=True)
+        img_str = base64.b64encode(buffer.getvalue()).decode()
+        data_url = f"data:image/png;base64,{img_str}"
+
+        return jsonify({
+            "status": "success",
+            "message": f"Censored {len(data['boxes'])} regions",
+            "censored_image": data_url
+        })
+    except Exception as e:
+        logger.error(f"Censor error: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
