@@ -69,7 +69,7 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel') -> np.ndarray:
                     #Block ausschneiden (array slicing)
                     block = image[y:y+height_block_pix, x:x+width_block_pix]
                     
-                    print(block)
+                    #print(block)
 
                     # Mittelwert berechnen (axis=(0,1) bedeutet Mittelwert über Zeilen UND Spalten) => Ergebnis: Vektor der Länge 3 (Je Mittelwert für R-/G-/B-Wert)
                     mean_color = block.mean(axis=(0, 1)).astype(np.uint8) #Zusatz um Mittelwerte (float) zu Ganzzahlen (0-255) umzuwandeln
