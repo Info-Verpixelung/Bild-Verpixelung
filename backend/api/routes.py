@@ -6,8 +6,8 @@ import logging
 
 from engine.image_adapter import piltonp, nptopil
 from engine.detector import detect
-from engine.censor import censor
-from schemas import CensorMode
+#from engine.censor import censor
+from api.schemas import CensorMode
 
 # Logging einrichten (wird automatisch im Flask-Debug-Modus angezeigt)
 logging.basicConfig(level=logging.INFO)
@@ -116,6 +116,7 @@ def detect_handler():
             "objects": []
         }), 500
 
+'''
 @app.route("/api/v1/censor", methods=["POST"])
 def censor_handler():
     data = request.get_json()
@@ -143,3 +144,4 @@ def censor_handler():
     except Exception as e:
         logger.error(f"Censor error: {str(e)}")
         return jsonify({"status": "error", "message": str(e)}), 500
+'''
