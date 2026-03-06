@@ -20,6 +20,7 @@ sicherste Methode: k same eigen
 
 ## So sahen übrigens die Deanonymisierten Bilder aus 
 Nur falls es jemanden interssiert, ist ganz spannend 
+![Deanonymisierte_Bilder](screenshots/Deanonymisierte_Bilder.png)
 
 Quelle: 
 https://arxiv.org/pdf/2210.10651
