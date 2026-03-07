@@ -6,7 +6,7 @@ import logging
 
 from engine.image_adapter import piltonp, nptopil
 from engine.detector import detect
-#from engine.censor import censor
+from engine.censor import censor
 from api.schemas import CensorMode
 
 # Logging einrichten (wird automatisch im Flask-Debug-Modus angezeigt)
