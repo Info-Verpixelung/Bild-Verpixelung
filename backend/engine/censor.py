@@ -92,10 +92,40 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10
                 rCorner = (eyePair[1][0] + eyePair[1][2], eyePair[1][1]) #rechtester, höchster Punkt
                 print(lCorner, rCorner)
             
-            # 2. dünne Bar ziehen
-            points = lineCoordinates(lCorner, rCorner)
+            # 2. Bar ziehen
 
-            # 3. Bar so dick machen, wie die Augen
+            # Line ziehen, die genau rechtwinklig zur eigentlichen Verbindung zwischen RCorner und LCorner ist, damit die Linie breit gezogen wird
+            x1, y1 = lCorner
+            x2, y2 = rCorner[::-1] # die x und y koordinaten von rCorner werden vertauscht, damit die Linie rechtwinklig zur eigentlichen Verbindung zwischen LCorner und RCorner gezogen wird
+            x1rev, y1rev = x1, y1
+            x2rev, y2rev = x2, y2
+            points = []
+
+            dx = abs(x2 - x1)
+            dy = abs(y2 - y1)
+
+            sx = 1 if x1 < x2 else -1 # bei der Funktion ist es vorgegeben, dass eine linke Ecke und eine rechte ecke vorgegeben ist. Deshalb wird diese Zeile nicht benötigt, falls wir mal eine universale Funktion brauchen, dann können wir einfach diese Zeile einkommentieren
+            # sy = 1 if y1 < y2 else -1 # hier unnötig, da die linie immer nach oben tendieren wird (weil die linie rechtwinklig zur verbindung zwischen lCorner und rCorner ist, die immer von links nach rechts geht)
+
+            err = dx - dy
+
+            while True:
+                points.append((x1, y1))
+
+                e2 = 2 * err
+
+                if e2 > -dy: # die beiden if-Abfragen wirken sozusagen gegeneinander: in der einen wird err erhöht, in der anderen verringert. Hierbei setzt sich in den meisten Fällen die Richtung (x oder y) durch, in die die Linie am ehesten Zeigt (bspw. bei einer 90-Grad-Linie setzt sich nur y durch, bei 0 Grad nur x, bei 45 Grad x und y abwechselnd)
+                    err -= dy 
+                    x1 += sx
+                    x1rev -= sx
+
+                if e2 < dx:
+                    err += dx
+
+                    y1 += 1
+                    y2 += 1
+
+                    y1rev -=1
 
     #Frage: wie Bild zurückgeben? Wie handeln, dass nur ein Teil verpixelt werden soll? (Lösung: nicht bei 0 anfangen? Eig. Wäre Funktion, die Anfangswert als Parameter kriegt besser)
     # wie mehrere Gesichter handeln?     
