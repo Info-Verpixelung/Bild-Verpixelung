@@ -82,50 +82,67 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10
 
     elif mode == 'eyeBar':
         for eyePair in boxes: # eyePair ist nicht wie bei der Verpixelung eine box, sondern eine Liste aus zwei boxen (zwei Augen). Die erste Box ist das linkere Auge.
-            # 1. von welchen Ecken aus muss die Bar gezogen werden?
+            # Liste von allen Ecken des linken und rechten Auges, beginnend in der oberen linken Ecke, im Uhrzeigersinn
+            lCorners =  [(eyePair[0][0],  eyePair[0][1]), (eyePair[0][0] + eyePair[0][2], eyePair[0][1]), (eyePair[0][0] + eyePair[0][2], eyePair[0][1] + eyePair[0][3]), (eyePair[0][0], eyePair[0][1] + eyePair[0][3])]
+            rCorners = [(eyePair[1][0],  eyePair[1][1]), (eyePair[1][0] + eyePair[1][2], eyePair[1][1]), (eyePair[1][0] + eyePair[1][2], eyePair[1][1] + eyePair[1][3]), (eyePair[1][0], eyePair[1][1] + eyePair[1][3])]
+            # 1. von welchen Ecken aus muss die Bar gezogen werden? (entweder linksoben bis rechtsunten oder linksunten bis rechtsoben)
             if eyePair[0][1] <= eyePair[1][1]: #right eye lower
-                lCorner = (eyePair[0][0], eyePair[0][1]) #linkester, höchster Punkt
-                rCorner = (eyePair[1][0] + eyePair[1][2], eyePair[1][1] + eyePair[1][3]) #rechtester, niedrigster Punkt
-                print(lCorner, rCorner) 
+                lCorner = (lCorners[0]) #linkester, höchster Punkt
+                adjacentlCorners = [lCorners[1], lCorners[3]] #die Ecken, die an die "extremste" Ecke (lCorner) angrenzen. Erste Ecke ist die Rechtere, zweite die Linkere
+                rCorner = (rCorners[2]) #rechtester, niedrigster Punkt
+                adjacentrCorners = [rCorners[1], rCorners[3]]
             else: #right eye higher
-                lCorner = (eyePair[0][0], eyePair[0][1] + eyePair[0][3]) #linkester, niedrigster Punkt
-                rCorner = (eyePair[1][0] + eyePair[1][2], eyePair[1][1]) #rechtester, höchster Punkt
-                print(lCorner, rCorner)
+                lCorner = (lCorners[3]) #linkester, niedrigster Punkt
+                adjacentlCorners = [lCorners[2], lCorners[0]] 
+                rCorner = (rCorners[1]) #rechtester, höchster Punkt
+                adjacentrCorners = [rCorners[2], rCorners[0]]
             
             # 2. Bar ziehen
 
             # Line ziehen, die genau rechtwinklig zur eigentlichen Verbindung zwischen RCorner und LCorner ist, damit die Linie breit gezogen wird
             x1, y1 = lCorner
             x2, y2 = rCorner[::-1] # die x und y koordinaten von rCorner werden vertauscht, damit die Linie rechtwinklig zur eigentlichen Verbindung zwischen LCorner und RCorner gezogen wird
-            x1rev, y1rev = x1, y1
+            upperBarDone = False #wenn die Bar in der y-negativen Richtung (nach oben) dick genug ist
+
+            x1rev, y1rev = x1, y1 # damit die Linie in zwei Richtungen gezogen wird
             x2rev, y2rev = x2, y2
-            points = []
+            lowerBarDone = False #wenn die Bar in der y-positiven Richtung (nach unten) dick genug ist
+
+            points = [] # Liste aller Punkte, die schwarz gefärbt werden müssen
 
             dx = abs(x2 - x1)
             dy = abs(y2 - y1)
 
-            sx = 1 if x1 < x2 else -1 # bei der Funktion ist es vorgegeben, dass eine linke Ecke und eine rechte ecke vorgegeben ist. Deshalb wird diese Zeile nicht benötigt, falls wir mal eine universale Funktion brauchen, dann können wir einfach diese Zeile einkommentieren
-            # sy = 1 if y1 < y2 else -1 # hier unnötig, da die linie immer nach oben tendieren wird (weil die linie rechtwinklig zur verbindung zwischen lCorner und rCorner ist, die immer von links nach rechts geht)
+            sx = 1 if x1 < x2 else -1 # je nachdem, ob die Line nach rechtsoben oder linksoben breiter wird
 
             err = dx - dy
 
-            while True:
-                points.append((x1, y1))
+            while not (lowerBarDone and upperBarDone): # zieht die Rechtwinklige Linie und Zeichnet eine Linie zwischen allen Punkten der Rechtwinkligen Linie (dicker machen)
+                points.append(lineCoordinates((x1,y1), (x2,y2)))
+                points.append(lineCoordinates((x1rev,y1rev), (x2rev,y2rev)))
 
                 e2 = 2 * err
 
-                if e2 > -dy: # die beiden if-Abfragen wirken sozusagen gegeneinander: in der einen wird err erhöht, in der anderen verringert. Hierbei setzt sich in den meisten Fällen die Richtung (x oder y) durch, in die die Linie am ehesten Zeigt (bspw. bei einer 90-Grad-Linie setzt sich nur y durch, bei 0 Grad nur x, bei 45 Grad x und y abwechselnd)
+                if e2 > -dy: # Funktionsweise Bresenhams Line Algorithm: die beiden if-Abfragen wirken sozusagen gegeneinander: in der einen wird err erhöht, in der anderen verringert. Hierbei setzt sich in den meisten Fällen die Richtung (x oder y) durch, in die die Linie am ehesten Zeigt (bspw. bei einer 90-Grad-Linie setzt sich nur y durch, bei 0 Grad nur x, bei 45 Grad x und y abwechselnd)
                     err -= dy 
-                    x1 += sx
-                    x1rev -= sx
+                    if not upperBarDone: # x Koordinaten auf der rechten und linken seite ändern
+                        x1 += sx
+                        x2 += sx
+                    if not lowerBarDone: # x Koordinaten auf der rechten und linken seite in die entgegengesetzte Richtung ändern
+                        x1rev -= sx
+                        x2rev -= sx
 
                 if e2 < dx:
                     err += dx
+                    if not upperBarDone:
+                        y1 -= 1
+                        y2 -= 1
+                    if not lowerBarDone:
+                        y1rev += 1
+                        y2rev += 1
 
-                    y1 += 1
-                    y2 += 1
-
-                    y1rev -=1
+                # Überprüfung ob die Obere Linie 
+            points.append(lineCoordinates(lCorner, rCorner))
 
     #Frage: wie Bild zurückgeben? Wie handeln, dass nur ein Teil verpixelt werden soll? (Lösung: nicht bei 0 anfangen? Eig. Wäre Funktion, die Anfangswert als Parameter kriegt besser)
     # wie mehrere Gesichter handeln?     
