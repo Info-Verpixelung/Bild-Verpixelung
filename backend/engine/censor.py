@@ -3,6 +3,35 @@ from PIL import Image
 import io
 import numpy as np
 
+def lineCoordinates(lCorner, rCorner):  # gibt eine Liste an Koordinaten zurück, die eine Linie zwischen zwei übergebenen "Eckpunkten" bilden.
+                                        # Basiert auf resenhams Line Algorithm, es wird für jedes pixel immer entschieden, ob der x und y - wert geändert wird, oder nicht
+    x1, y1 = lCorner
+    x2, y2 = rCorner
+
+    points = []
+
+    dx = abs(x2 - x1)
+    dy = abs(y2 - y1)
+
+    #sx = 1 if x1 < x2 else -1 # bei der Funktion ist es vorgegeben, dass eine linke Ecke und eine rechte ecke vorgegeben ist. Deshalb wird diese Zeile nicht benötigt, falls wir mal eine universale Funktion brauchen, dann können wir einfach diese Zeile einkommentieren
+    sy = 1 if y1 < y2 else -1 # tendiert die linie nach oben oder nach unten?
+
+    err = dx - dy
+
+    while not(x1 == x2 and y1 == y2):
+        points.append((x1, y1))
+
+        e2 = 2 * err
+
+        if e2 > -dy: # die beiden if-Abfragen wirken sozusagen gegeneinander: in der einen wird err erhöht, in der anderen verringert. Hierbei setzt sich in den meisten Fällen die Richtung (x oder y) durch, in die die Linie am ehesten Zeigt (bspw. bei einer 90-Grad-Linie setzt sich nur y durch, bei 0 Grad nur x, bei 45 Grad x und y abwechselnd)
+            err -= dy 
+            x1 += 1
+
+        if e2 < dx:
+            err += dx
+            y1 += sy
+
+    return points
 
 # Wichtig: Variable 'Block' beztieht sich immer auf das, was ein Pixel wird. 'Box' bezieht sich auf den Input, also die Boudning Box, d.h. den ganzen Bereich 
 def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10, num_pixelation_y = 10) -> np.ndarray:
@@ -64,6 +93,9 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10
                 print(lCorner, rCorner)
             
             # 2. dünne Bar ziehen
+            points = lineCoordinates(lCorner, rCorner)
+
+            # 3. Bar so dick machen, wie die Augen
 
     #Frage: wie Bild zurückgeben? Wie handeln, dass nur ein Teil verpixelt werden soll? (Lösung: nicht bei 0 anfangen? Eig. Wäre Funktion, die Anfangswert als Parameter kriegt besser)
     # wie mehrere Gesichter handeln?     
