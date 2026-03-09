@@ -43,6 +43,10 @@ def health():
 def detect():
     return detect_handler()
 
+@app.route("/api/v1/censor", methods=["POST"])
+def censor():
+    return censor_handler()
+
 def open_browser():
     time.sleep(1)
     webbrowser.open("http://localhost:5001")

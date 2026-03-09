@@ -41,7 +41,7 @@ def decode_data_url(data_url: str) -> Image.Image:
 
     return image
 
-def detect_objects_stub(image, subject: str, width: int, height: int):
+def detect_objects_stub(image, subject: str, width: int, height: int): # Stale / isn't used
     """Dummy Detection - später echte face_recognition hier rein"""
 
     # Einfache Dummy-Box in der Mitte des Bildes
@@ -116,17 +116,16 @@ def detect_handler():
             "objects": []
         }), 500
 
-'''
-@app.route("/api/v1/censor", methods=["POST"])
+
 def censor_handler():
-    data = request.get_json()
+    data = reques                                                                                                                                                                                                        t.get_json()
     required = ["image", "boxes", "mode"]
     missing = [f for f in required if not data.get(f)]
     if missing:
         return jsonify({"status": "error", "message": f"Missing: {', '.join(missing)}"}), 400
 
     try:
-        pil_image = decodedataurl(data["image"])
+        pil_image = decode_data_url(data["image"])
         np_image = piltonp(pil_image)
         censored_np = censor(np_image, data["boxes"], data["mode"])
         censored_pil = nptopil(censored_np)
@@ -144,4 +143,3 @@ def censor_handler():
     except Exception as e:
         logger.error(f"Censor error: {str(e)}")
         return jsonify({"status": "error", "message": str(e)}), 500
-'''
