@@ -118,7 +118,7 @@ def detect_handler():
 
 
 def censor_handler():
-    data = reques                                                                                                                                                                                                        t.get_json()
+    data = request.get_json()
     required = ["image", "boxes", "mode"]
     missing = [f for f in required if not data.get(f)]
     if missing:
