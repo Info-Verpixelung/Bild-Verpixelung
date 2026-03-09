@@ -5,7 +5,35 @@ import { handleFiles, refreshImagePreviews } from './files.js';
 import { drawDetectionsOnImage } from './canvas.js';
 import { startLoadingAnimation, completeLoadingAnimation } from './animations.js';
 import { setupLightbox } from './lightbox.js';
-import { updatePreviewButtonState } from './ui.js';
+import { updatePreviewButtonState, updateProcessButtonState } from './ui.js';
+
+function mapAnonymizationMode(frontendMode) {
+    if (frontendMode === "blacken") return "black_bar";
+    if (frontendMode === "blur") return "blur";
+    return "pixel";
+}
+
+function toNumericBoxes(detections = []) {
+    return detections.map((detection) => {
+        const centerX = Number(detection.x) || 0;
+        const centerY = Number(detection.y) || 0;
+        const halfWidth = Math.max(1, Math.round((Number(detection.w) || 0) / 2));
+        const halfHeight = Math.max(1, Math.round((Number(detection.h) || 0) / 2));
+        return [centerX, centerY, halfWidth, halfHeight];
+    });
+}
+
+function dataUrlToUint8Array(dataUrl) {
+    const [, base64Data] = dataUrl.split(",");
+    const binaryString = atob(base64Data);
+    const bytes = new Uint8Array(binaryString.length);
+
+    for (let index = 0; index < binaryString.length; index += 1) {
+        bytes[index] = binaryString.charCodeAt(index);
+    }
+
+    return bytes;
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     // DOM Elements
@@ -22,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const outputPreviewGrid = document.getElementById("output-preview-grid");
     const outputPreviewText = document.querySelector("#output-preview-grid .image-preview-text");
     const deleteAllButton = document.getElementById("delete-all-button");
+    const outputDeleteAllButton = document.getElementById("output-delete-all-button");
     const dragDropOverlay = document.getElementById("drag-drop-overlay");
 
     // Setup lightbox and get open function
@@ -117,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         previewButton.disabled = true;
         const originalText = previewButton.textContent;
-        previewButton.textContent = "⏳ Verarbeitung läuft...";
+        previewButton.textContent = "Verarbeitung läuft...";
         const subject = censorshipSubjectSelect.value;
 
         for (const [index, imageObj] of state.uploadedFiles.entries()) {
@@ -172,10 +201,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         previewButton.textContent = originalText;
         updatePreviewButtonState();
+        updateProcessButtonState();
+        saveImagesToIndexedDB();
     });
 
-    // Delete all button
-    deleteAllButton.addEventListener("click", () => {
+    function handleDeleteAllPreview() {
         if (state.uploadedFiles.length === 0) return;
 
         const confirmDelete = confirm(`Möchten Sie wirklich alle ${state.uploadedFiles.length} Bild${state.uploadedFiles.length > 1 ? 'er' : ''} löschen?`);
@@ -184,46 +214,157 @@ document.addEventListener("DOMContentLoaded", () => {
             state.uploadedFiles = [];
             saveImagesToIndexedDB();
             refreshImagePreviews();
-            
-            Array.from(outputPreviewGrid.children).forEach(child => {
-                if (child.classList.contains("image-preview-item")) {
-                    outputPreviewGrid.removeChild(child);
-                }
-            });
+            updateProcessButtonState();
+        }
+    }
+
+    function handleDeleteAllOutput() {
+        if (state.outputFiles.length === 0) return;
+
+        const confirmDelete = confirm(`Möchten Sie wirklich alle ${state.outputFiles.length} anonymisierte${state.outputFiles.length > 1 ? 'n Bilder' : 's Bild'} löschen?`);
+
+        if (confirmDelete) {
+            state.outputFiles = [];
+            saveImagesToIndexedDB();
+            refreshImagePreviews();
             downloadButton.disabled = true;
         }
-    });
+    }
+
+    if (deleteAllButton) {
+        deleteAllButton.addEventListener("click", handleDeleteAllPreview);
+    }
+    if (outputDeleteAllButton) {
+        outputDeleteAllButton.addEventListener("click", handleDeleteAllOutput);
+    }
 
     // Process button handler
-    processButton.addEventListener("click", () => {
-        if (state.uploadedFiles.length > 0) {
-            Array.from(outputPreviewGrid.children).forEach(child => {
-                if (child.classList.contains("image-preview-item")) {
-                    outputPreviewGrid.removeChild(child);
-                }
-            });
-
-            outputPreviewText.style.display = "none";
-            downloadButton.disabled = false;
-
-            // Placeholder - actual processing not implemented
-            state.uploadedFiles.forEach((imageObj, index) => {
-                const anonymizationType = anonymizationTypeSelect.value;
-                const censorshipSubject = censorshipSubjectSelect.value;
-                console.log(`Processing image ${index + 1} with type: ${anonymizationType}, subject: ${censorshipSubject}`);
-
-                const outputWrapper = document.createElement("div");
-                outputWrapper.classList.add("image-preview-item");
-
-                const img = document.createElement("img");
-                img.src = "/static/icons/placeholder.png";
-                img.alt = "Ausgabevorschau";
-
-                outputWrapper.appendChild(img);
-                outputPreviewGrid.appendChild(outputWrapper);
-            });
-        } else {
+    processButton.addEventListener("click", async () => {
+        if (state.uploadedFiles.length === 0) {
             alert("Bitte laden Sie zuerst Bilder hoch, um sie zu verarbeiten.");
+            return;
         }
+
+        processButton.disabled = true;
+        const originalText = processButton.textContent;
+        processButton.textContent = "Anonymisierung läuft...";
+
+        Array.from(outputPreviewGrid.children).forEach((child) => {
+            if (child.classList.contains("image-preview-item")) {
+                outputPreviewGrid.removeChild(child);
+            }
+        });
+
+        outputPreviewText.style.display = "none";
+        downloadButton.disabled = true;
+
+        state.outputFiles = [];
+
+        const mode = mapAnonymizationMode(anonymizationTypeSelect.value);
+        let successCount = 0;
+
+        for (const [index, imageObj] of state.uploadedFiles.entries()) {
+            const detections = Array.isArray(imageObj.detections) ? imageObj.detections : [];
+            const numericBoxes = toNumericBoxes(detections);
+
+            try {
+                const payload = {
+                    image: imageObj.dataURL,
+                    boxes: numericBoxes,
+                    mode
+                };
+
+                const response = await fetch(config.censorApiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    console.error(`Censor request failed for image ${index + 1}:`, response.status);
+                    continue;
+                }
+
+                const data = await response.json();
+
+                if (!data || data.status !== "success" || !data.censored_image) {
+                    console.error(`Invalid censor response for image ${index + 1}:`, data);
+                    continue;
+                }
+
+                state.outputFiles.push({
+                    name: imageObj.name,
+                    type: "image/png",
+                    dataURL: data.censored_image
+                });
+                successCount += 1;
+            } catch (error) {
+                console.error(`Censor request error for image ${index + 1}:`, error);
+            }
+        }
+
+        refreshImagePreviews();
+
+        if (successCount === 0) {
+            outputPreviewText.style.display = "block";
+            alert("Keine Bilder konnten anonymisiert werden. Bitte prüfen Sie die Backend-Logs.");
+        }
+
+        downloadButton.disabled = successCount === 0;
+        processButton.textContent = originalText;
+        updateProcessButtonState();
+        saveImagesToIndexedDB();
+    });
+
+    downloadButton.addEventListener("click", () => {
+        const processedImages = state.outputFiles;
+
+        if (processedImages.length === 0) {
+            alert("Keine anonymisierten Bilder zum Herunterladen vorhanden.");
+            return;
+        }
+
+        if (!window.JSZip) {
+            alert("ZIP-Bibliothek konnte nicht geladen werden.");
+            return;
+        }
+
+        const originalText = downloadButton.textContent;
+        downloadButton.disabled = true;
+        downloadButton.textContent = "ZIP wird erstellt...";
+
+        const zip = new window.JSZip();
+        const zipFolder = zip.folder("anonymisierte_bilder");
+
+        processedImages.forEach((imageObj, index) => {
+            const originalName = imageObj.name || `bild_${index + 1}`;
+            const baseName = originalName.includes(".")
+                ? originalName.substring(0, originalName.lastIndexOf("."))
+                : originalName;
+
+            zipFolder.file(`${baseName}_anonymisiert.png`, dataUrlToUint8Array(imageObj.dataURL));
+        });
+
+        zip.generateAsync({ type: "blob" })
+            .then((zipBlob) => {
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                const link = document.createElement("a");
+                const blobUrl = URL.createObjectURL(zipBlob);
+
+                link.href = blobUrl;
+                link.download = `anonymisierte_bilder_${timestamp}.zip`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobUrl);
+            })
+            .catch((error) => {
+                console.error("ZIP creation failed:", error);
+                alert("ZIP-Datei konnte nicht erstellt werden.");
+            })
+            .finally(() => {
+                downloadButton.textContent = originalText;
+                downloadButton.disabled = state.outputFiles.length === 0;
+            });
     });
 });

@@ -1,7 +1,7 @@
 // File handling functions
 import { state, config } from './state.js';
 import { saveImagesToIndexedDB } from './db.js';
-import { updateDeleteAllButtonVisibility, updatePreviewButtonState } from './ui.js';
+import { updateDeleteAllButtonVisibility, updatePreviewButtonState, updateProcessButtonState } from './ui.js';
 
 export function handleFiles(files) {
     const imagePreviewGrid = document.getElementById("image-preview-grid");
@@ -10,13 +10,7 @@ export function handleFiles(files) {
     
     if (!imagePreviewGrid || !outputPreviewGrid || !downloadButton) return;
 
-    // Clear output preview items
-    Array.from(outputPreviewGrid.children).forEach(child => {
-        if (child.classList.contains("image-preview-item")) {
-            outputPreviewGrid.removeChild(child);
-        }
-    });
-    downloadButton.disabled = true;
+    downloadButton.disabled = state.outputFiles.length === 0;
 
     const filesToAdd = Array.from(files).slice(0, config.maxFiles - state.uploadedFiles.length);
 
@@ -29,6 +23,7 @@ export function handleFiles(files) {
                 dataURL: e.target.result 
             });
             updatePreviewButtonState();
+            updateProcessButtonState();
             saveImagesToIndexedDB();
             refreshImagePreviews();
         };
@@ -84,13 +79,49 @@ export function displayImagePreview(imageObj, index) {
     imagePreviewGrid.appendChild(previewWrapper);
 }
 
+export function displayOutputPreview(imageObj, index) {
+    const outputPreviewGrid = document.getElementById("output-preview-grid");
+    if (!outputPreviewGrid || !imageObj.dataURL) return;
+
+    const openLightbox = window.openLightboxFunc;
+
+    const outputWrapper = document.createElement("div");
+    outputWrapper.classList.add("image-preview-item");
+    outputWrapper.dataset.fileIndex = index;
+
+    const img = document.createElement("img");
+    img.src = imageObj.dataURL;
+    img.alt = "Ausgabevorschau";
+    img.style.cursor = "pointer";
+    img.title = "Klicken für große Ansicht";
+
+    img.addEventListener("click", () => {
+        if (openLightbox) openLightbox(index, "output");
+    });
+
+    const deleteButton = document.createElement("span");
+    deleteButton.classList.add("delete-image-button");
+    deleteButton.innerHTML = "&times;";
+    deleteButton.title = "Bild entfernen";
+    deleteButton.addEventListener("click", () => {
+        removeOutputPreview(index);
+    });
+
+    outputWrapper.appendChild(img);
+    outputWrapper.appendChild(deleteButton);
+    outputPreviewGrid.appendChild(outputWrapper);
+}
+
 export function removeImagePreview(index) {
-    const downloadButton = document.getElementById("download-button");
-    
     state.uploadedFiles.splice(index, 1);
     saveImagesToIndexedDB();
     refreshImagePreviews();
-    if (downloadButton) downloadButton.disabled = true;
+}
+
+export function removeOutputPreview(index) {
+    state.outputFiles.splice(index, 1);
+    saveImagesToIndexedDB();
+    refreshImagePreviews();
 }
 
 export function refreshImagePreviews() {
@@ -119,13 +150,23 @@ export function refreshImagePreviews() {
         displayImagePreview(imageObj, index);
     });
 
+    state.outputFiles.forEach((imageObj, index) => {
+        displayOutputPreview(imageObj, index);
+    });
+
     if (imagePreviewText) {
         imagePreviewText.style.display = imagePreviewGrid.querySelectorAll(".image-preview-item").length === 0 ? "block" : "none";
     }
     if (outputPreviewText) {
         outputPreviewText.style.display = outputPreviewGrid.querySelectorAll(".image-preview-item").length === 0 ? "block" : "none";
     }
+
+    const downloadButton = document.getElementById("download-button");
+    if (downloadButton) {
+        downloadButton.disabled = outputPreviewGrid.querySelectorAll(".image-preview-item").length === 0;
+    }
     
     updateDeleteAllButtonVisibility();
     updatePreviewButtonState();
+    updateProcessButtonState();
 }

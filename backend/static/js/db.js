@@ -40,7 +40,12 @@ export function saveImagesToIndexedDB() {
             const clearRequest = store.clear();
             
             clearRequest.onsuccess = () => {
-                const putRequest = store.put(state.uploadedFiles, "images");
+                const appState = {
+                    uploadedFiles: state.uploadedFiles,
+                    outputFiles: state.outputFiles
+                };
+
+                const putRequest = store.put(appState, "images");
                 
                 putRequest.onerror = () => {
                     console.error("Put error:", putRequest.error);
@@ -62,7 +67,7 @@ export function saveImagesToIndexedDB() {
             };
             
             transaction.oncomplete = () => {
-                console.log(`Images saved to IndexedDB (${state.uploadedFiles.length} files)`);
+                console.log(`Images saved to IndexedDB (${state.uploadedFiles.length} preview, ${state.outputFiles.length} output)`);
                 resolve();
             };
         } catch (e) {
@@ -87,9 +92,14 @@ export function loadImagesFromIndexedDB() {
             
             request.onsuccess = () => {
                 const data = request.result;
-                if (data && Array.isArray(data) && data.length > 0) {
+                if (Array.isArray(data)) {
                     state.uploadedFiles = data;
-                    console.log(`Loaded ${state.uploadedFiles.length} images from IndexedDB`);
+                    state.outputFiles = [];
+                    console.log(`Loaded ${state.uploadedFiles.length} images from IndexedDB (legacy format)`);
+                } else if (data && typeof data === "object") {
+                    state.uploadedFiles = Array.isArray(data.uploadedFiles) ? data.uploadedFiles : [];
+                    state.outputFiles = Array.isArray(data.outputFiles) ? data.outputFiles : [];
+                    console.log(`Loaded ${state.uploadedFiles.length} preview and ${state.outputFiles.length} output images from IndexedDB`);
                 }
                 resolve();
             };
