@@ -88,49 +88,79 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10
             # 1. von welchen Ecken aus muss die Bar gezogen werden? (entweder linksoben bis rechtsunten oder linksunten bis rechtsoben)
             if eyePair[0][1] <= eyePair[1][1]: #right eye lower
                 lCorner = (lCorners[0]) #linkester, höchster Punkt
-                adjacentlCorners = [lCorners[1], lCorners[3]] #die Ecken, die an die "extremste" Ecke (lCorner) angrenzen. Erste Ecke ist die Rechtere, zweite die Linkere
+                adjacentlCorners = [lCorners[1], lCorners[3]] #die Ecken, die an die "extremste" Ecke (lCorner) angrenzen. Erste Ecke ist die obere, zweite die niedrigere
                 rCorner = (rCorners[2]) #rechtester, niedrigster Punkt
                 adjacentrCorners = [rCorners[1], rCorners[3]]
             else: #right eye higher
                 lCorner = (lCorners[3]) #linkester, niedrigster Punkt
-                adjacentlCorners = [lCorners[2], lCorners[0]] 
+                adjacentlCorners = [lCorners[0], lCorners[2]] 
                 rCorner = (rCorners[1]) #rechtester, höchster Punkt
-                adjacentrCorners = [rCorners[2], rCorners[0]]
+                adjacentrCorners = [rCorners[0], rCorners[2]]
             
             # 2. Bar ziehen
 
             # Line ziehen, die genau rechtwinklig zur eigentlichen Verbindung zwischen RCorner und LCorner ist, damit die Linie breit gezogen wird
+        
+            #Variablen für die Linien zwischen den Punkten der rechtwinligen Linie
             x1, y1 = lCorner
-            x2, y2 = rCorner[::-1] # die x und y koordinaten von rCorner werden vertauscht, damit die Linie rechtwinklig zur eigentlichen Verbindung zwischen LCorner und RCorner gezogen wird
+            x2, y2 = rCorner 
             upperBarDone = False #wenn die Bar in der y-negativen Richtung (nach oben) dick genug ist
 
             x1rev, y1rev = x1, y1 # damit die Linie in zwei Richtungen gezogen wird
             x2rev, y2rev = x2, y2
             lowerBarDone = False #wenn die Bar in der y-positiven Richtung (nach unten) dick genug ist
 
+            # Variablen für die rechtwinklige Linie (nur das äquivalent von rCorner benötigt)
+            xDiff= x2-x1
+            yDiff= y2-y1
+            xRight = x1+yDiff
+            yRight = y1+xDiff
+
+
             points = [] # Liste aller Punkte, die schwarz gefärbt werden müssen
 
-            dx = abs(x2 - x1)
-            dy = abs(y2 - y1)
+            dx = abs(xRight - x1)
+            dy = abs(yRight - y1)
 
             sx = 1 if x1 < x2 else -1 # je nachdem, ob die Line nach rechtsoben oder linksoben breiter wird
 
             err = dx - dy
 
             while not (lowerBarDone and upperBarDone): # zieht die Rechtwinklige Linie und Zeichnet eine Linie zwischen allen Punkten der Rechtwinkligen Linie (dicker machen)
-                points.append(lineCoordinates((x1,y1), (x2,y2)))
-                points.append(lineCoordinates((x1rev,y1rev), (x2rev,y2rev)))
+                if not upperBarDone:
+                    points.append(lineCoordinates((x1,y1), (x2,y2)))
+                if not lowerBarDone:
+                    points.append(lineCoordinates((x1rev,y1rev), (x2rev,y2rev)))
+                
+                # Überprüfung ob die linie in "nach oben" dick genug ist
+                if not upperBarDone:
+                    upperBar = lineCoordinates((x1,y1), (x2,y2))
+                    for point in upperBar:
+                        if adjacentlCorners[0] == point:
+                            adjacentlCorners[0] = (None, None)
+                        if adjacentrCorners[0] == point:
+                            adjacentrCorners[0] = (None, None)
+                    if adjacentlCorners[0] == (None, None) and adjacentrCorners[0] == (None, None): upperBarDone = True
+
+                if not lowerBarDone:
+                    lowerBar = lineCoordinates((x1rev,y1rev), (x2rev,y2rev))
+                    for point in lowerBar:
+                        if adjacentlCorners[1] == point:
+                            adjacentlCorners[1] = (None, None)
+                        if adjacentrCorners[1] == point:
+                            adjacentrCorners[1] = (None, None)
+                    if adjacentlCorners[1] == (None, None) and adjacentrCorners[1] == (None, None): lowerBarDone = True
 
                 e2 = 2 * err
 
                 if e2 > -dy: # Funktionsweise Bresenhams Line Algorithm: die beiden if-Abfragen wirken sozusagen gegeneinander: in der einen wird err erhöht, in der anderen verringert. Hierbei setzt sich in den meisten Fällen die Richtung (x oder y) durch, in die die Linie am ehesten Zeigt (bspw. bei einer 90-Grad-Linie setzt sich nur y durch, bei 0 Grad nur x, bei 45 Grad x und y abwechselnd)
                     err -= dy 
                     if not upperBarDone: # x Koordinaten auf der rechten und linken seite ändern
-                        x1 += sx
-                        x2 += sx
+                        x1 -= sx
+                        x2 -= sx
                     if not lowerBarDone: # x Koordinaten auf der rechten und linken seite in die entgegengesetzte Richtung ändern
-                        x1rev -= sx
-                        x2rev -= sx
+                        x1rev += sx
+                        x2rev += sx
 
                 if e2 < dx:
                     err += dx
@@ -140,9 +170,6 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10
                     if not lowerBarDone:
                         y1rev += 1
                         y2rev += 1
-
-                # Überprüfung ob die Obere Linie 
-            points.append(lineCoordinates(lCorner, rCorner))
 
     #Frage: wie Bild zurückgeben? Wie handeln, dass nur ein Teil verpixelt werden soll? (Lösung: nicht bei 0 anfangen? Eig. Wäre Funktion, die Anfangswert als Parameter kriegt besser)
     # wie mehrere Gesichter handeln?     
