@@ -218,3 +218,4 @@ frontend/dist/
 frontend/.vite/
 frontend/.env
 frontend/.env.*
+.DS_Store

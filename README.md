@@ -27,6 +27,6 @@ Note_v2: Wie ich sehe ist "**[flask_cors](https://pypi.org/project/flask-cors/)*
 - im Terminal in den backend Ordner navigieren, dann "conda env create -f environment-mac.yml" oder "conda env create -f environment-windows.yml" je nach OS
 
 >Um das Programm auszuführen:
-- Im Terminal in backend/api navigieren
+- Im Terminal in Bild-Verpixelung/backend navigieren
 - "conda activate bildverpixelung" ausführen
-- "python backend/app.py" ausführen, das Programm sollte nun gestartet werden und das Frontend sollte sich automatisch im Browser öffnen.
+- "python -m api.app" ausführen, das Programm sollte nun gestartet werden und das Frontend sollte sich automatisch im Browser öffnen.
