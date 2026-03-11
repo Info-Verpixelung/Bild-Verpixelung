@@ -39,38 +39,34 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 5,
     Returns:
         np.ndarray: censored image
     """
-    # Höhe und breite des Bildes in Variablen speichern 
-    #height, width = image.shape[:2]
-    
-    #h, w, c = image.shape
+
     output = image.copy()
     if mode != 'eyeBar':
         for box in boxes:
-            # Koordinaten der Box so umwandeln, dass sie linke obere und rechte untere ecke angeben können
-            box_left = box[0] - box[2]
-            box_right = box[0] + box[2]
-            box_up = box[1] - box[3]
-            box_down = box[1] + box[3]
+        # Koordinaten der Box so umwandeln, dass sie linke obere und rechte untere ecke angeben können
+        box_left = box[0] - box[2]
+        box_right = box[0] + box[2]
+        box_up = box[1] - box[3]
+        box_down = box[1] + box[3]
 
+        # Ab hier: Entscheidungsstruktur nach Art der Anonymisierung (neigentlich noch geplant: Gaußian Blur)
+        if mode == 'pixel':
+            # Variable 'Block' bezieht sich auf das, was zu einem Pixel wird. 'Box' bezieht sich auf den ganzen Bereich des erkannten Gesichtes
+           
             # Größe der "Pixel-Blöcke" berechnen
             width_block_pix = (box_right - box_left) // num_pixelation_x
             height_block_pix = (box_down - box_up) // num_pixelation_y
-                
+            #Aufteilen in Blöcke (Erstellen je eines Blockes, fängt bei 0 an, Schrittgröße height/ width_block_pix, macht so viele Schritte bis Rand erreicht)
+            for y in range(box_up, box_down, height_block_pix):
+                for x in range(box_left, box_right, width_block_pix):
+                    #Block ausschneiden (array slicing)
+                    block = image[y:y+height_block_pix, x:x+width_block_pix]
 
-            if mode == 'pixel':
-                #Aufteilen in Blöcke (Erstellen je eines Blockes, fängt bei 0 an, Schrittgröße height/ width_block_pix, macht so viele Schritte bis Rand erreicht)
-                for y in range(box_up, box_down, height_block_pix):
-                    for x in range(box_left, box_right, width_block_pix):
-                        #Block ausschneiden (array slicing)
-                        block = image[y:y+height_block_pix, x:x+width_block_pix]
-                        
-                        #print(block)
+                    # Mittelwert berechnen (axis=(0,1) bedeutet Mittelwert über Zeilen UND Spalten) => Ergebnis: Vektor der Länge 3 (Je Mittelwert für R-/G-/B-Wert)
+                    mean_color = block.mean(axis=(0, 1)).astype(np.uint8) #Zusatz um Mittelwerte (float) zu Ganzzahlen (0-255) umzuwandeln
 
-                        # Mittelwert berechnen (axis=(0,1) bedeutet Mittelwert über Zeilen UND Spalten) => Ergebnis: Vektor der Länge 3 (Je Mittelwert für R-/G-/B-Wert)
-                        mean_color = block.mean(axis=(0, 1)).astype(np.uint8) #Zusatz um Mittelwerte (float) zu Ganzzahlen (0-255) umzuwandeln
-
-                        # Mittelwert allen Pixeln im Block zuweisen => überschreiben aller Pixel im Block
-                        output[y:y+height_block_pix, x:x+width_block_pix] = mean_color
+                    # Mittelwert allen Pixeln im Block zuweisen => überschreiben aller Pixel im Block
+                    output[y:y+height_block_pix, x:x+width_block_pix] = mean_color
     else:
         for eyePair in boxes: # eyePair ist nicht wie bei der Verpixelung eine box, sondern eine Liste aus zwei boxen (zwei Augen). Die erste Box ist das linkere Auge.
             # Liste von allen Ecken des linken und rechten Auges, beginnend in der oberen linken Ecke, im Uhrzeigersinn

@@ -1,56 +1,60 @@
+# Startmechanismus der Web-App. Kommunikation Frontend- Backend. 
+
+# Importe 
 from flask import Flask, render_template
 from flask_cors import CORS
-from api.routes import detect_handler, censor_handler # import missing censor_handler
+from api.routes import detect_handler, censor_handler # Import der nötigen Methoden von Routes.py
 import webbrowser
 import threading
 import time
 import os
 import sys
 
-# Handle PyInstaller temp folder
+# Handling von PyInstaller temp folder (sicherstellen, dass Dateipfade funktionieren, egal ob das Programm compliiert ist oder nicht)
 if getattr(sys, 'frozen', False):
     base_path = sys._MEIPASS
-    #print("Files in _MEIPASS root:", os.listdir(sys._MEIPASS))
-    #print("Templates folder:", os.listdir(os.path.join(sys._MEIPASS, "templates")))
-    #print("Static folder:", os.listdir(os.path.join(sys._MEIPASS, "static")))
 else:
     base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-template_folder = os.path.join(base_path, "templates")
-static_folder = os.path.join(base_path, "static")
+# Definiert, wo FLASK die nötigen Dateien findet, um die Webseite laufen zu lassen
+template_folder = os.path.join(base_path, "templates")  # HTML- page
+static_folder = os.path.join(base_path, "static")       # Everything else (pictures, java script...)
 
-#print("Using template folder:", template_folder)
-#print("Using static folder:", static_folder)
-
-
+# Initialisiert den Web Server
 app = Flask(
     __name__,
     template_folder=template_folder,
     static_folder=static_folder
 )
 
+# Erlaubt Cross-Origin- Requests (Website, die auf einen anderen server zugreift) 
 CORS(app)
 
+#Laden des html Dokumentes beim Öffnennder Seite
 @app.route("/")
 def index():
     return render_template("index.html")
 
+#Test-Punkt
 @app.route("/health", methods=["GET"])
 def health():
     return "status ok"
 
+# Kommunikation mit der API für Gesichtserkennung und Zensierung. 
 @app.route("/api/v1/detect", methods=["POST"])
-def detect():
+def detect():                           # Definieren einer detect-Methode, die auf detect_handler von routes.py basiert
     return detect_handler()
 
 @app.route("/api/v1/censor", methods=["POST"])
-def censor():
+def censor():                           # Definieren einer censor-Methode, die auf detect_handler von routes.py basiert
     return censor_handler()
 
+# Öffnet automatisch den Browser
 def open_browser():
     time.sleep(1)
     webbrowser.open("http://localhost:5001")
 
+# Öffnet den Server
 if __name__ == "__main__":
     print("Bild-Verpixelungs-App startet...")
     print("Backend-Server auf http://localhost:5001")

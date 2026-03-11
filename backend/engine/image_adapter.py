@@ -1,4 +1,5 @@
 # backend/engine/imageadapter.py
+# definiert Methoden, wie PILs in NumPy arrays umgewandelt werden können und anders herum
 import numpy as np
 from PIL import Image
 
@@ -8,9 +9,8 @@ def piltonp(image: Image.Image) -> np.ndarray:
     """
     if image.mode != "RGB":
         image = image.convert("RGB")
-    arr = np.array(image)  # shape: (H, W, 3), dtype=uint8
+    arr = np.array(image)  # shape: (H, W, 3 [also dreidimensionales array, mit Höhe, Breite und Farbkanal (RGB) als Indexes/ Dimensionen]), dtype=uint8
     return arr
-
 
 def nptopil(array: np.ndarray) -> Image.Image:
     """
@@ -18,7 +18,5 @@ def nptopil(array: np.ndarray) -> Image.Image:
     """
     if array.dtype != np.uint8:
         array = array.astype(np.uint8)
-    # If needed you could also ensure shape is 3 channels,
-    # but for your pipeline H x W x 3 is expected.
     image = Image.fromarray(array, mode="RGB")
     return image
