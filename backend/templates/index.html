@@ -61,7 +61,6 @@
                 <select id="censorship-subject">
                     <option value="faces">Gesichter</option>
                     <option value="eyes">Nur Augen (Balken)</option>
-                    <option value="body">Ganzer Körper</option>
                 </select>
             </div>
 
@@ -71,7 +70,13 @@
         </div>
 
         <div class="output-section">
-            <h2>Anonymisierte Bilder</h2>
+            <div class="section-header">
+                <h2>Anonymisierte Bilder</h2>
+                <button id="output-delete-all-button" class="delete-all-button" title="Alle Bilder löschen">
+                    <span class="delete-all-icon">🗑️</span>
+                    <span class="delete-all-text">Alle löschen</span>
+                </button>
+            </div>
 
             <div class="image-preview-grid" id="output-preview-grid">
                 <span class="image-preview-text">Hier werden Ihre anonymisierten Bilder angezeigt.</span>
@@ -113,6 +118,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script type="module" src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
