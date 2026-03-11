@@ -1,3 +1,4 @@
+# Erkennung von Gesichtern/ Augen mithilfe der KI, enthält Funktion, die "Koordinaten" der erkannten Boxen ausgibt
 # backend/engine/detector.py
 from typing import List, Dict
 import numpy as np
