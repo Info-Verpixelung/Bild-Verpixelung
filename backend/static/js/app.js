@@ -8,7 +8,7 @@ import { setupLightbox } from './lightbox.js';
 import { updatePreviewButtonState, updateProcessButtonState } from './ui.js';
 
 function mapAnonymizationMode(frontendMode) {
-    if (frontendMode === "blacken") return "black_bar";
+    if (frontendMode === "blacken") return "eyeBar";
     if (frontendMode === "blur") return "blur";
     return "pixel";
 }

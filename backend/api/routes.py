@@ -123,7 +123,7 @@ def censor_handler():
     missing = [f for f in required if not data.get(f)]
     if missing:
         return jsonify({"status": "error", "message": f"Missing: {', '.join(missing)}"}), 400
-
+    print(f"HIII {data}")
     try:
         pil_image = decode_data_url(data["image"])
         np_image = piltonp(pil_image)
