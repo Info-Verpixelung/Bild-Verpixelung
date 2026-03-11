@@ -265,7 +265,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         for (const [index, imageObj] of state.uploadedFiles.entries()) {
             const detections = Array.isArray(imageObj.detections) ? imageObj.detections : [];
-            const numericBoxes = toNumericBoxes(detections);
+            const numericBoxesTemp = toNumericBoxes(detections);
+            let numericBoxes;
+            if (detections[0].type == "eye") {
+                function pairRows(arr) {
+                    const result = [];
+
+                    for (let i = 0; i < arr.length; i += 2) {
+                        result.push([arr[i], arr[i + 1]]);
+                    }
+
+                    return result;
+                }
+
+                numericBoxes = pairRows(numericBoxesTemp);
+            }
+            else {
+                numericBoxes = numericBoxesTemp;
+            }
 
             try {
                 const payload = {
