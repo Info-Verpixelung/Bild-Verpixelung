@@ -7,7 +7,8 @@ import face_recognition
 
 def _normalize_subject(subject: str) -> str:
     """
-    Normalize the subject string.
+    Normalisierung verschiedener Inputs des frontends, so das Informatioen einheitlich sind und Unstimmichkeiten
+    nicht zu Fehlern führen. -> Standardmäßig "face"
     """
     if not subject:
         return "face"
@@ -20,31 +21,34 @@ def _normalize_subject(subject: str) -> str:
     return "face"  # fallback
 
 
+    #Bild als Numpy Array erkennen und parameter zurückgeben.
 def detect(np_img: np.ndarray, subject: str = "face") -> List[Dict]:
     """
-    Detect faces/eyes and return bounding boxes in the format:
+    Merkmal erkennen und als Liste parameter zurückgeben, im Format:
     [{ "type": "face"/"eye", "x": center_x, "y": center_y, "w": width, "h": height }, ...]
+    Es wird also der Mittelpunkt angegeben und von dem aus die höhe und breite der Box.
     """
-    normalized_subject = _normalize_subject(subject)
+    normalized_subject = _normalize_subject(subject) #Normalisierung zur EInheitlichkeit
 
-    # Validate image (same as your original)
-    if np_img.ndim != 3 or np_img.shape[2] != 3:
+    #Formate überprüfen
+    if np_img.ndim != 3 or np_img.shape[2] != 3: #Sichergehen dass RGB angegeben wird und nicht Grayscale oder was anderes
         raise ValueError(f"Expected RGB image with shape (H, W, 3), got {np_img.shape}")
-    if np_img.dtype != np.uint8:
+    if np_img.dtype != np.uint8: #Überprüfung des Datentyps (uint8), sonst konvertieren
         np_img = np_img.astype(np.uint8)
 
-    # Get BOTH face locations AND landmarks (landmarks includes face locations too)
-    face_locations = face_recognition.face_locations(np_img, model="hog")
-    face_landmarks_list = face_recognition.face_landmarks(np_img)
+    #Aufruf der KI
+    face_locations = face_recognition.face_locations(np_img, model="hog") #Position der Gesichter
+    face_landmarks_list = face_recognition.face_landmarks(np_img) #Typ (Linkes Auge, Rechtes Auge, etc.)
+    #Hierbei entsprechen die Indexe einander, also face_locations[i] und face_landmarks_list[i] gehören zu dem gleichen Gesicht
 
+    #Output Container
     boxes: List[Dict] = []
 
-    # Process each detected face
+    #Jedes erkanntes Gesicht verarbeiten
     for i, (top, right, bottom, left) in enumerate(face_locations):
-        face_landmarks = face_landmarks_list[i]  # corresponding landmarks for this face
+        face_landmarks = face_landmarks_list[i]  #landmark für das entsprechende Gesicht
 
-        if normalized_subject == "face":
-            # YOUR ORIGINAL WORKING FACE CODE - unchanged
+        if normalized_subject == "face": #Fall: Ganzes Gesicht -> Berechnen der Größe der Box (um in unserem Mittelpunkt-Orientierten Format zurückgeben zu können, statt anhand der Ecken)
             w = right - left
             h = bottom - top
             x_center = left + w / 2.0
@@ -57,25 +61,25 @@ def detect(np_img: np.ndarray, subject: str = "face") -> List[Dict]:
                 "h": int(round(h)),
             })
 
-        elif normalized_subject == "eyes":
-            # Precise eye landmarks
+        elif normalized_subject == "eyes": #Gleiches System, nur für Augen statt ganze Gesichter
             left_eye_points = np.array(face_landmarks['left_eye'])
             right_eye_points = np.array(face_landmarks['right_eye'])
 
-            # Left eye bounding box from actual landmark points
+            #Linkes Auge anhand der Landmarks
             left_eye_left = int(np.min(left_eye_points[:, 0]))
             left_eye_top = int(np.min(left_eye_points[:, 1]))
             left_eye_right = int(np.max(left_eye_points[:, 0]))
             left_eye_bottom = int(np.max(left_eye_points[:, 1]))
 
-            # Right eye bounding box from actual landmark points
+            #Rechtes Auge anhand der Landmarks
             right_eye_left = int(np.min(right_eye_points[:, 0]))
             right_eye_top = int(np.min(right_eye_points[:, 1]))
             right_eye_right = int(np.max(right_eye_points[:, 0]))
             right_eye_bottom = int(np.max(right_eye_points[:, 1]))
 
-            # Convert to center x,y,w,h format (same as your face code)
-            # Left eye
+            #Zu Mittelpunk Format konvertieren x,y,w,h format (selbiges wie oben)
+
+            #Linkes Auge
             left_w = left_eye_right - left_eye_left
             left_h = left_eye_bottom - left_eye_top
             left_x = left_eye_left + left_w / 2.0
@@ -88,7 +92,7 @@ def detect(np_img: np.ndarray, subject: str = "face") -> List[Dict]:
                 "h": int(round(left_h)),
             })
 
-            # Right eye
+            #Rechtes Auge
             right_w = right_eye_right - right_eye_left
             right_h = right_eye_bottom - right_eye_top
             right_x = right_eye_left + right_w / 2.0

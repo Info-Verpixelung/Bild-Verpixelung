@@ -20,10 +20,10 @@ logger = logging.getLogger(__name__)
 
 #Konvertiert Data-URL zu PIL Image und loggt Details
 def decode_data_url(data_url: str) -> Image.Image:
-    
+    # Trennt "Metadaten"/ Präfix des Bildes von Daten
     if "," not in data_url:
         raise ValueError("Invalid data URL: missing comma separator")
-    prefix, b64_data = data_url.split(",", 1)                           # Trennt "Metadaten"/ Präfix des Bildes von Daten
+    prefix, b64_data = data_url.split(",", 1)
 
     # Log: Präfix prüfen
     logger.info(f"Data-URL Prefix: {prefix}")
@@ -105,7 +105,6 @@ def censor_handler():
     missing = [f for f in required if not data.get(f)]
     if missing:
         return jsonify({"status": "error", "message": f"Missing: {', '.join(missing)}"}), 400
-
     try:
         pil_image = decode_data_url(data["image"])                      # Umwandlung der Bilddaten in Request in pil
         np_image = piltonp(pil_image)                                   # ... und dann zu numpy array

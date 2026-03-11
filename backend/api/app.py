@@ -54,7 +54,7 @@ def open_browser():
     time.sleep(1)                       # Nach kurzer Verzögerung
     webbrowser.open("http://localhost:5001")
 
-# Öffnet den Server (nur wenn als skript laufen gelassen)
+# Öffnet den Server
 if __name__ == "__main__":
     print("Bild-Verpixelungs-App startet...")
     print("Backend-Server auf http://localhost:5001")
