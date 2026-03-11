@@ -5,7 +5,7 @@ import numpy as np
 
 
 # Wichtig: Variable 'Block' beztieht sich immer auf das, was ein Pixel wird. 'Box' bezieht sich auf den Input, also die Boudning Box, d.h. den ganzen Bereich 
-def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10, num_pixelation_y = 10) -> np.ndarray:
+def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 5, num_pixelation_y = 5) -> np.ndarray:
     """returns censored image given to the function according to the given boxes
 
     Args:
@@ -18,10 +18,7 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10
     Returns:
         np.ndarray: censored image
     """
-    # Höhe und breite des Bildes in Variablen speichern 
-    #height, width = image.shape[:2]
-    
-    #h, w, c = image.shape
+
     output = image.copy()
     
     for box in boxes:
@@ -31,29 +28,25 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10
         box_up = box[1] - box[3]
         box_down = box[1] + box[3]
 
-        # Größe der "Pixel-Blöcke" berechnen
-        width_block_pix = (box_right - box_left) // num_pixelation_x
-        height_block_pix = (box_down - box_up) // num_pixelation_y
-            
-
+        # Ab hier: Entscheidungsstruktur nach Art der Anonymisierung (neigentlich noch geplant: Gaußian Blur)
         if mode == 'pixel':
+            # Variable 'Block' bezieht sich auf das, was zu einem Pixel wird. 'Box' bezieht sich auf den ganzen Bereich des erkannten Gesichtes
+           
+            # Größe der "Pixel-Blöcke" berechnen
+            width_block_pix = (box_right - box_left) // num_pixelation_x
+            height_block_pix = (box_down - box_up) // num_pixelation_y
             #Aufteilen in Blöcke (Erstellen je eines Blockes, fängt bei 0 an, Schrittgröße height/ width_block_pix, macht so viele Schritte bis Rand erreicht)
             for y in range(box_up, box_down, height_block_pix):
                 for x in range(box_left, box_right, width_block_pix):
                     #Block ausschneiden (array slicing)
                     block = image[y:y+height_block_pix, x:x+width_block_pix]
-                    
-                    #print(block)
 
                     # Mittelwert berechnen (axis=(0,1) bedeutet Mittelwert über Zeilen UND Spalten) => Ergebnis: Vektor der Länge 3 (Je Mittelwert für R-/G-/B-Wert)
                     mean_color = block.mean(axis=(0, 1)).astype(np.uint8) #Zusatz um Mittelwerte (float) zu Ganzzahlen (0-255) umzuwandeln
 
                     # Mittelwert allen Pixeln im Block zuweisen => überschreiben aller Pixel im Block
-                    output[y:y+height_block_pix, x:x+width_block_pix] = mean_color
+                    output[y:y+height_block_pix, x:x+width_block_pix] = mean_color  
 
-    #Frage: wie Bild zurückgeben? Wie handeln, dass nur ein Teil verpixelt werden soll? (Lösung: nicht bei 0 anfangen? Eig. Wäre Funktion, die Anfangswert als Parameter kriegt besser)
-    # wie mehrere Gesichter handeln?     
-    print("ich bin hier angekommen")  
     return output.astype(np.uint8)
 
 if '__name__' == "__main__":
