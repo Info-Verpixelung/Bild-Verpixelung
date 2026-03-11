@@ -50,7 +50,7 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10
             box_up = box[1] - box[3]
             box_down = box[1] + box[3]  
 
-            # Ab hier: Entscheidungsstruktur nach Art der Anonymisierung (neigentlich noch geplant: Gaußian Blur)
+            # Ab hier: Entscheidungsstruktur nach Art der Anonymisierung (eigentlich noch geplant: Gaußian Blur)
             if mode == 'pixel':
                 # Variable 'Block' bezieht sich auf das, was zu einem Pixel wird. 'Box' bezieht sich auf den ganzen Bereich des erkannten Gesichtes
             
