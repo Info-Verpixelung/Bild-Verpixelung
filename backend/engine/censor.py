@@ -26,7 +26,7 @@ def rotated_rect_points(cx, cy, width, height, angle):
             
 
 # Wichtig: Variable 'Block' beztieht sich immer auf das, was ein Pixel wird. 'Box' bezieht sich auf den Input, also die Boudning Box, d.h. den ganzen Bereich 
-def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10, num_pixelation_y = 10) -> np.ndarray:
+def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 5, num_pixelation_y = 5) -> np.ndarray:
     """returns censored image given to the function according to the given boxes
 
     Args:
