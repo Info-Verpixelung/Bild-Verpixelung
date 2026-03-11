@@ -1,3 +1,4 @@
+# Konkrete Implementierung der Anonymisierungsmethoden 
 import base64
 from PIL import Image
 import io
@@ -25,8 +26,8 @@ def rotated_rect_points(cx, cy, width, height, angle):
                 return rect
             
 
-# Wichtig: Variable 'Block' beztieht sich immer auf das, was ein Pixel wird. 'Box' bezieht sich auf den Input, also die Boudning Box, d.h. den ganzen Bereich 
-def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 5, num_pixelation_y = 5) -> np.ndarray:
+
+def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10, num_pixelation_y = 10) -> np.ndarray:
     """returns censored image given to the function according to the given boxes
 
     Args:
@@ -49,7 +50,7 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 5,
             box_up = box[1] - box[3]
             box_down = box[1] + box[3]  
 
-            # Ab hier: Entscheidungsstruktur nach Art der Anonymisierung (neigentlich noch geplant: Gaußian Blur)
+            # Ab hier: Entscheidungsstruktur nach Art der Anonymisierung (eigentlich noch geplant: Gaußian Blur)
             if mode == 'pixel':
                 # Variable 'Block' bezieht sich auf das, was zu einem Pixel wird. 'Box' bezieht sich auf den ganzen Bereich des erkannten Gesichtes
             

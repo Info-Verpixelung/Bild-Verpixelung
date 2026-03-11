@@ -1,3 +1,4 @@
+# Builds für windows, mac und Linux
 name: Build-EXE
 on:
   workflow_dispatch:
