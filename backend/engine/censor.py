@@ -116,13 +116,17 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 1,
             height = 0
             
             for i in range(len(adjacentrCorners)): # immer 2 mal
-                newHeight = math.sqrt((rCornerAdjusted[0]-adjacentrCorners[i][0])**2 + (rCornerAdjusted[1]-adjacentrCorners[i][1])**2)
+                print(rCornerAdjusted[0]-adjacentrCorners[i][0])
+                print(rCornerAdjusted[1]-adjacentrCorners[i][1])
+                newHeight = math.sqrt((rCornCenter[0]-adjacentrCorners[i][0])**2 + (rCornCenter[1]-adjacentrCorners[i][1])**2)
                 height = max(newHeight, height) 
 
-            for i in range(len(adjacentlCorners)): # immer 2 mal
-                newHeight = math.sqrt((lCornerAdjusted[0]-adjacentlCorners[i][0])**2 + (lCornerAdjusted[1]-adjacentlCorners[i][1])**2)
-                height = max(newHeight, height)
-
+            # for i in range(len(adjacentlCorners)): # immer 2 mal
+            #     newHeight = math.sqrt((lCornerAdjusted[0]-adjacentlCorners[i][0])**2 + (lCornerAdjusted[1]-adjacentlCorners[i][1])**2)
+            #     height = max(newHeight, height)
+            
+            height = height*2 # weil die rectangle funktion die height selbst halbiert
+            
             # 5. Rechtecks-koordinaten berechnen
             rectangle = rotated_rect_points(rectCenter[0], rectCenter[1], width, height, angle)
 
@@ -130,23 +134,36 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 1,
             for x,y in rectangle:
                 output[y][x] = [0,0,0]
             
-            # augen selbst rot markieren (für debug):
-            # cx1 = round((lCorners[0][0]+lCorners[2][0])/2)
-            # cy1 = round((lCorners[0][1]+lCorners[2][1])/2)
-            # totalWidth= lCorners[2][0]-lCorners[0][0]
-            # totalHeight= (lCorners[2][1]-lCorners[0][1])
-            # liste = rotated_rect_points(cx1, cy1, totalWidth, totalHeight,0)
-            # for point in liste:
-            #     output[point[1]][point[0]] = [255,0,0]
+            rotated_rect_points(round((lCorners[0][0]+lCorners[2][0])/2),round((lCorners[0][1]+lCorners[2][1])/2), round((lCorners[2][0]-lCorners[0][0])/2), round((lCorners[2][1]-lCorners[0][1])/2),0)
+            cx1 = round((lCorners[0][0]+lCorners[2][0])/2)
+            cy1 = round((lCorners[0][1]+lCorners[2][1])/2)
+            totalWidth= lCorners[2][0]-lCorners[0][0]
+            totalHeight= (lCorners[2][1]-lCorners[0][1])
+            liste = rotated_rect_points(cx1, cy1, totalWidth, totalHeight,0)
+            for point in liste:
+                output[point[1]][point[0]] = [255,0,0]
                     
-            # cx1 = round((rCorners[0][0]+rCorners[2][0])/2)
-            # cy1 = round((rCorners[0][1]+rCorners[2][1])/2)
-            # totalWidth= rCorners[2][0]-rCorners[0][0]
-            # totalHeight= (rCorners[2][1]-rCorners[0][1])
-            # liste = rotated_rect_points(cx1, cy1, totalWidth, totalHeight,0)
-            # for point in liste:
-            #     output[point[1]][point[0]] = [255,0,0]
+            cx1 = round((rCorners[0][0]+rCorners[2][0])/2)
+            cy1 = round((rCorners[0][1]+rCorners[2][1])/2)
+            totalWidth= rCorners[2][0]-rCorners[0][0]
+            totalHeight= (rCorners[2][1]-rCorners[0][1])
+            liste = rotated_rect_points(cx1, cy1, totalWidth, totalHeight,0)
+            for point in liste:
+                output[point[1]][point[0]] = [255,0,0]
+            
+            output[round(rectCenter[1])][round(rectCenter[0])] = [0,255,0]
+            output[round(lCornCenter[1])][round(lCornCenter[0])] = [0,255,0]
+            output[round(rCornCenter[1])][round(rCornCenter[0])] = [0,255,0]
 
+            output[round(lCornerAdjusted[1])][round(lCornerAdjusted[0])] = [0,255,0]
+            output[round(rCornerAdjusted[1])][round(rCornerAdjusted[0])] = [0,255,0]
+
+            for i in range(len(adjacentrCorners)): # immer 2 mal
+                output[round(rCornerAdjusted[1]-adjacentrCorners[i][1])][round(rCornerAdjusted[0]-adjacentrCorners[i][0])] = [0,0,255]
+                
+            for i in range(len(adjacentlCorners)): # immer 2 mal
+                output[round(lCornerAdjusted[1]-adjacentlCorners[i][1])][round(lCornerAdjusted[0]-adjacentlCorners[i][0])] = [0,0,255]
+                
             
             
 
