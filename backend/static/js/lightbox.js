@@ -9,9 +9,15 @@ export function setupLightbox() {
     const lightboxNext = document.getElementById("lightbox-next");
     const lightboxCounter = document.getElementById("lightbox-counter");
     
-    function openLightbox(index) {
-        if (state.uploadedFiles.length === 0) return;
+    function getCurrentLightboxItems() {
+        return state.currentLightboxView === "output" ? state.outputFiles : state.uploadedFiles;
+    }
+
+    function openLightbox(index, view = "preview") {
+        const sourceItems = view === "output" ? state.outputFiles : state.uploadedFiles;
+        if (sourceItems.length === 0) return;
         
+        state.currentLightboxView = view;
         state.currentLightboxIndex = index;
         updateLightboxImage(lightboxImage, lightboxCounter, lightboxPrev, lightboxNext);
         lightboxModal.classList.add("active");
@@ -24,25 +30,33 @@ export function setupLightbox() {
     }
     
     function updateLightboxImage(lightboxImage, lightboxCounter, lightboxPrev, lightboxNext) {
-        const imageObj = state.uploadedFiles[state.currentLightboxIndex];
+        const currentItems = getCurrentLightboxItems();
+        const imageObj = currentItems[state.currentLightboxIndex];
         if (!imageObj) return;
-        
-        const imageToShow = imageObj.previewImage || imageObj.dataURL;
+
+        const imageToShow = state.currentLightboxView === "output"
+            ? (imageObj.dataURL || imageObj.censoredImage || imageObj.previewImage)
+            : (imageObj.previewImage || imageObj.dataURL);
+
         lightboxImage.src = imageToShow;
         
-        lightboxCounter.textContent = `${state.currentLightboxIndex + 1} / ${state.uploadedFiles.length}`;
+        lightboxCounter.textContent = `${state.currentLightboxIndex + 1} / ${currentItems.length}`;
         
-        lightboxPrev.style.display = state.uploadedFiles.length > 1 ? "flex" : "none";
-        lightboxNext.style.display = state.uploadedFiles.length > 1 ? "flex" : "none";
+        lightboxPrev.style.display = currentItems.length > 1 ? "flex" : "none";
+        lightboxNext.style.display = currentItems.length > 1 ? "flex" : "none";
     }
     
     function showPreviousImage(lightboxImage, lightboxCounter, lightboxPrev, lightboxNext) {
-        state.currentLightboxIndex = (state.currentLightboxIndex - 1 + state.uploadedFiles.length) % state.uploadedFiles.length;
+        const currentItems = getCurrentLightboxItems();
+        if (currentItems.length === 0) return;
+        state.currentLightboxIndex = (state.currentLightboxIndex - 1 + currentItems.length) % currentItems.length;
         updateLightboxImage(lightboxImage, lightboxCounter, lightboxPrev, lightboxNext);
     }
     
     function showNextImage(lightboxImage, lightboxCounter, lightboxPrev, lightboxNext) {
-        state.currentLightboxIndex = (state.currentLightboxIndex + 1) % state.uploadedFiles.length;
+        const currentItems = getCurrentLightboxItems();
+        if (currentItems.length === 0) return;
+        state.currentLightboxIndex = (state.currentLightboxIndex + 1) % currentItems.length;
         updateLightboxImage(lightboxImage, lightboxCounter, lightboxPrev, lightboxNext);
     }
     

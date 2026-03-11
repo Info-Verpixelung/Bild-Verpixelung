@@ -10,15 +10,18 @@ const getApiBaseUrl = () => {
 
 export const state = {
     uploadedFiles: [],
+    outputFiles: [],
     dbAvailable: true,
     userWarnedAboutStorage: false,
     dragCounter: 0,
     db: null,
-    currentLightboxIndex: 0
+    currentLightboxIndex: 0,
+    currentLightboxView: "preview"
 };
 
 export const config = {
     detectApiUrl: `${getApiBaseUrl()}/api/v1/detect`,
+    censorApiUrl: `${getApiBaseUrl()}/api/v1/censor`,
     maxFiles: 10
 };
 
