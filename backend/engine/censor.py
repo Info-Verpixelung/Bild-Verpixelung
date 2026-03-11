@@ -1,3 +1,4 @@
+# Konkrete Implementierung der Anonymisierungsmethoden 
 import base64
 from PIL import Image
 import io
