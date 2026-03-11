@@ -17,14 +17,14 @@ else:
 template_folder = os.path.join(base_path, "templates") # HTML- page
 static_folder = os.path.join(base_path, "static") # Everything else (pictures, java script...)
 
-# Initialising the Web Server
+# Initialises the Web Server
 app = Flask(
     __name__,
     template_folder=template_folder,
     static_folder=static_folder
 )
 
-# Allows Cross-Origin- Requests (Website acessing another server, here: the API) 
+# Allows Cross-Origin- Requests (Website accessing another server, here: the API) 
 CORS(app)
 
 #Load the html document when someone opens the page
