@@ -1,5 +1,6 @@
-# Handelt Kommunikation 
-#Import von Bibliotheken
+# Definiert, wie Requests gehandelt werden. "Verbindungsstelle" zwischen censor- methode und den Requests. Dafür verantwortlich, 
+# die Methoden zu definieren, die zu Requests mit Ursprungsbildern im Base64- Format diese Anonymisiert zurückgeben
+# Import von Bibliotheken
 from flask import request, jsonify
 import base64
 import io
