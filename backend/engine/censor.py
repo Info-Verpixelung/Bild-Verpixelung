@@ -19,14 +19,14 @@ def rotated_rect_points(cx, cy, width, height, angle):
                         x = ix * c - iy * s + cx
                         y = ix * s + iy * c + cy
 
-                        
+                        rectangle.append((round(x)-1, round(y)))
                         rectangle.append((round(x), round(y)))
-                        #rectangle.append((round(x)+1, round(y)+1))
+                        rectangle.append((round(x)+1, round(y)))
                 return rectangle
             
 
 # Wichtig: Variable 'Block' beztieht sich immer auf das, was ein Pixel wird. 'Box' bezieht sich auf den Input, also die Boudning Box, d.h. den ganzen Bereich 
-def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10, num_pixelation_y = 10) -> np.ndarray:
+def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 1, num_pixelation_y = 1) -> np.ndarray:
     """returns censored image given to the function according to the given boxes
 
     Args:
@@ -70,13 +70,17 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10
                         mean_color = block.mean(axis=(0, 1)).astype(np.uint8) #Zusatz um Mittelwerte (float) zu Ganzzahlen (0-255) umzuwandeln
 
                         # Mittelwert allen Pixeln im Block zuweisen => überschreiben aller Pixel im Block
-                        output[y:y+height_block_pix, x:x+width_block_pix] = mean_color
+                        output[y:y+height_block_pix, x:x+width_block_pix] = [255,0,0]
 
     elif mode == 'eyeBar':
         for eyePair in boxes: # eyePair ist nicht wie bei der Verpixelung eine box, sondern eine Liste aus zwei boxen (zwei Augen). Die erste Box ist das linkere Auge.
             # Liste von allen Ecken des linken und rechten Auges, beginnend in der oberen linken Ecke, im Uhrzeigersinn
-            lCorners =  [(eyePair[0][0],  eyePair[0][1]), (eyePair[0][0] + eyePair[0][2], eyePair[0][1]), (eyePair[0][0] + eyePair[0][2], eyePair[0][1] + eyePair[0][3]), (eyePair[0][0], eyePair[0][1] + eyePair[0][3])]
-            rCorners = [(eyePair[1][0],  eyePair[1][1]), (eyePair[1][0] + eyePair[1][2], eyePair[1][1]), (eyePair[1][0] + eyePair[1][2], eyePair[1][1] + eyePair[1][3]), (eyePair[1][0], eyePair[1][1] + eyePair[1][3])]
+            lWidth, lHeight = eyePair[0][2:]
+
+            rWidth, rHeight = eyePair[1][2:]
+
+            lCorners =  [(eyePair[0][0]-lWidth,  eyePair[0][1]-lHeight), (eyePair[0][0] + lWidth, eyePair[0][1] - lHeight), (eyePair[0][0] + lWidth, eyePair[0][1] + lHeight), (eyePair[0][0]-lWidth, eyePair[0][1] + lHeight)]
+            rCorners = [(eyePair[1][0]-rWidth,  eyePair[1][1]-rHeight), (eyePair[1][0] + rWidth, eyePair[1][1]-rHeight), (eyePair[1][0] + rWidth, eyePair[1][1]+ rHeight), (eyePair[1][0]-rWidth, eyePair[1][1] + rHeight)]
             # 1. von welchen Ecken aus muss die Bar gezogen werden? (entweder linksoben bis rechtsunten oder linksunten bis rechtsoben)
             if eyePair[0][1] <= eyePair[1][1]: #right eye lower
                 lCorner = (lCorners[0]) #linkester, höchster Punkt
@@ -101,12 +105,12 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10
             # 3. Breite (zwischen beiden Augen) des Rechtecks bestimmen: der Abstand, zwischen einem punkt, der zwar die gleiche Höhe hat wie die lcorner, aber eine kleinere
             
             lCornerAdjusted = (rectCenter[0] + (lCorner[1] - rectCenter[1]) / math.tan(angle), lCorner[1]) # linke ecke, aber so, dass sie mit dem Angle übereinstimmt
-            lWidth = math.sqrt(lCornerAdjusted[0]**2+lCornerAdjusted[1]**2)
+            lDiagonalWidth = math.sqrt(lCornerAdjusted[0]**2+lCornerAdjusted[1]**2)
 
             rCornerAdjusted = (rectCenter[0] + (rCorner[1] - rectCenter[1]) / math.tan(angle), rCorner[1])
-            rWidth = math.sqrt(rCornerAdjusted[0]**2+rCornerAdjusted[1]**2)
+            rDiagonalWidth = math.sqrt(rCornerAdjusted[0]**2+rCornerAdjusted[1]**2)
 
-            width = max(rWidth, lWidth) # damit beide rects immer abgedeckt sind
+            width = max(rDiagonalWidth, lDiagonalWidth) # damit beide rects immer abgedeckt sind
 
             # 4. Höhe berechnen: max aus distance zwischen corner centers
             height = 0
@@ -126,11 +130,22 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10
             for x,y in rectangle:
                 output[y][x] = [0,0,0]
             
-            
-            liste = rotated_rect_points(round((lCorners[0][0]+lCorners[2][0])/2),round((lCorners[0][1]+lCorners[2][1])/2), round((lCorners[2][0]-lCorners[0][0])/2), round((lCorners[2][1]-lCorners[0][1])/2),0)
-            for point in liste:
-                output[point[1]][point[0]] = [255,0,0]
+            # augen selbst rot markieren (für debug):
+            # cx1 = round((lCorners[0][0]+lCorners[2][0])/2)
+            # cy1 = round((lCorners[0][1]+lCorners[2][1])/2)
+            # totalWidth= lCorners[2][0]-lCorners[0][0]
+            # totalHeight= (lCorners[2][1]-lCorners[0][1])
+            # liste = rotated_rect_points(cx1, cy1, totalWidth, totalHeight,0)
+            # for point in liste:
+            #     output[point[1]][point[0]] = [255,0,0]
                     
+            # cx1 = round((rCorners[0][0]+rCorners[2][0])/2)
+            # cy1 = round((rCorners[0][1]+rCorners[2][1])/2)
+            # totalWidth= rCorners[2][0]-rCorners[0][0]
+            # totalHeight= (rCorners[2][1]-rCorners[0][1])
+            # liste = rotated_rect_points(cx1, cy1, totalWidth, totalHeight,0)
+            # for point in liste:
+            #     output[point[1]][point[0]] = [255,0,0]
 
             
             
