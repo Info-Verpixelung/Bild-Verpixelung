@@ -46,26 +46,6 @@ def decode_data_url(data_url: str) -> Image.Image:
 
     return image
 
-# Löschen??? 
-def detect_objects_stub(image, subject: str, width: int, height: int): # Stale / isn't used
-    """Dummy Detection - später echte face_recognition hier rein"""
-
-    # Einfache Dummy-Box in der Mitte des Bildes
-    center_x = width // 2
-    center_y = height // 2
-    box_width = min(width, height) // 3
-    box_height = box_width * 0.8  # etwas höher als breit
-
-    logger.info(f"Dummy-Detection für '{subject}': Box bei x={center_x}, y={center_y}, w={box_width}, h={box_height}")
-
-    return [{
-        "type": subject if subject in ["face", "faces"] else "object",
-        "x": center_x,
-        "y": center_y,
-        "w": box_width,
-        "h": box_height
-    }]
-
 def detect_handler():
     """Haupt-Handler für /api/v1/detect"""
 
@@ -97,11 +77,6 @@ def detect_handler():
         objects = detect(np_img, subject)
 
         # 3. Erfolgreiche Response
-        #response = {
-        #    "status": "success",
-        #    "message": f"Detection complete for {filename} ({len(objects)} objects found)",
-        #    "objects": objects
-        #}
         response = {
             "status": "success",
             "message": f"Detection complete for {filename}, {len(objects)} objects found",
