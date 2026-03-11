@@ -18,7 +18,7 @@ else:
 
 # Definiert, wo FLASK die nötigen Dateien findet, um die Webseite laufen zu lassen
 template_folder = os.path.join(base_path, "templates")  # HTML- page
-static_folder = os.path.join(base_path, "static")       # Everything else (pictures, java script...)
+static_folder = os.path.join(base_path, "static")       # für Funktion der Website notwendiger Rest (Bilder, java script...)
 
 # Initialisiert den Web Server
 app = Flask(
@@ -30,7 +30,7 @@ app = Flask(
 # Erlaubt Cross-Origin- Requests (Website, die auf einen anderen server zugreift) 
 CORS(app)
 
-#Laden des html Dokumentes beim Öffnennder Seite
+#Laden des html Dokumentes beim Öffnen der Seite
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -40,21 +40,21 @@ def index():
 def health():
     return "status ok"
 
-# Kommunikation mit der API für Gesichtserkennung und Zensierung. 
+# Kommunikation mit Backend für Gesichtserkennung und Zensierung. 
 @app.route("/api/v1/detect", methods=["POST"])
 def detect():                           # Definieren einer detect-Methode, die auf detect_handler von routes.py basiert
     return detect_handler()
 
 @app.route("/api/v1/censor", methods=["POST"])
-def censor():                           # Definieren einer censor-Methode, die auf detect_handler von routes.py basiert
+def censor():                           # Definieren einer censor-Methode, die auf censor_handler von routes.py basiert
     return censor_handler()
 
 # Öffnet automatisch den Browser
 def open_browser():
-    time.sleep(1)
+    time.sleep(1)                       # Nach kurzer Verzögerung
     webbrowser.open("http://localhost:5001")
 
-# Öffnet den Server
+# Öffnet den Server (nur wenn als skript laufen gelassen)
 if __name__ == "__main__":
     print("Bild-Verpixelungs-App startet...")
     print("Backend-Server auf http://localhost:5001")

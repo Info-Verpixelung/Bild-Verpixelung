@@ -1,5 +1,6 @@
-# Definiert, wie Requests gehandelt werden. "Verbindungsstelle" zwischen censor- methode und den Requests. Dafür verantwortlich, 
-# die Methoden zu definieren, die zu Requests mit Ursprungsbildern im Base64- Format diese Anonymisiert zurückgeben
+# Definiert, wie Requests gehandelt werden. "Verbindungsstelle" zwischen censor-Methode und den Requests. 
+# Dafür verantwortlich, die Methoden zu definieren, die zu Requests mit Ursprungsbildern im Base64- Format diese Anonymisiert zurückgeben
+
 # Import von Bibliotheken
 from flask import request, jsonify
 import base64
@@ -13,16 +14,16 @@ from engine.detector import detect
 from engine.censor import censor
 from api.schemas import CensorMode
 
-# Logging einrichten (wird automatisch im Flask-Debug-Modus angezeigt)
+# Logging einrichten 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 #Konvertiert Data-URL zu PIL Image und loggt Details
 def decode_data_url(data_url: str) -> Image.Image:
-    # Trennt "Metadaten"/ Präfix des Bildes von Daten
+    
     if "," not in data_url:
         raise ValueError("Invalid data URL: missing comma separator")
-    prefix, b64_data = data_url.split(",", 1)
+    prefix, b64_data = data_url.split(",", 1)                           # Trennt "Metadaten"/ Präfix des Bildes von Daten
 
     # Log: Präfix prüfen
     logger.info(f"Data-URL Prefix: {prefix}")
@@ -60,7 +61,7 @@ def detect_handler():
         return jsonify({
             "status": "error",
             "message": f"Missing required fields: {', '.join(missing)}"
-        }), 400                                             #Fehlermeldung, die "bad response" entspricht
+        }), 400                                             #Fehlermeldung, die für "bad response" steht
     
     # Infos aus Request in Variablen speichern
     subject = data["subject"]
