@@ -18,7 +18,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout-repo-content
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: setup miniconda
         uses: conda-incubator/setup-miniconda@v3
@@ -48,7 +48,7 @@ jobs:
             --add-data "static;static" \
             api/app.py
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: Windows-build
           path: backend/dist
