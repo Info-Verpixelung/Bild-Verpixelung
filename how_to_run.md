@@ -49,3 +49,187 @@
 - Ggf. wird das Ausführen durch das Betriebssystem blockier und es muss erlaubt werden
   - Bei Mac: Ausführen, dann in den Einstellung zu "Privacy & Security" navigieren, runterscrollen und "Open anyway" clicken.
 - Das Programm sollte ausgeführt werden, das Frontend sollte sich automatisch im Browser öffnen
+
+
+
+# CLI Anwendung -- Bildanalyse & Zensur
+
+Die CLI ermöglicht es, Bilder automatisch auf **Gesichter oder Augen zu
+analysieren** und diese optional zu **zensieren** (Pixeln, Blur oder
+Eye-Bar).
+
+Die Anwendung kann entweder ein **einzelnes Bild** oder einen **ganzen
+Ordner mit Bildern** verarbeiten.
+
+------------------------------------------------------------------------
+
+# CLI ausführen
+
+Im Terminal in den `backend` Ordner navigieren und das Environment
+aktivieren.
+
+``` bash
+conda activate bildverpixelung
+```
+
+Danach kann die CLI gestartet werden mit:
+
+``` bash
+python -m cli.main <input> [OPTIONEN]
+```
+
+Beispiel:
+
+``` bash
+python -m cli.main image.jpg --mode censor --censor blur
+```
+
+------------------------------------------------------------------------
+
+# Command Struktur
+
+``` bash
+python -m cli.main INPUT [--mode MODE] [--censor TYPE] [--output ORDNER]
+```
+
+Parameter    Beschreibung
+  ------------ -----------------------------------------------
+`INPUT`      Bilddatei oder Ordner mit Bildern
+`--mode`     Modus der Ausführung (`detect` oder `censor`)
+`--censor`   Art der Zensur (`pixel`, `blur`, `eyeBar`)
+`--output`   Optionaler Ausgabeordner
+
+------------------------------------------------------------------------
+
+# Parameter im Detail
+
+## INPUT
+
+Pfad zu einer **Bilddatei oder einem Ordner mit Bildern**.
+
+Unterstützte Formate:
+
+-   `.png`
+-   `.jpg`
+-   `.jpeg`
+-   `.webp`
+
+### Beispiel (ein Bild)
+
+``` bash
+python -m cli.main foto.jpg
+```
+
+### Beispiel (ganzer Ordner)
+
+``` bash
+python -m cli.main ./bilder
+```
+
+Alle Bilder im Ordner werden automatisch verarbeitet.
+
+------------------------------------------------------------------------
+
+# Mode Parameter
+
+``` bash
+--mode detect
+```
+
+oder
+
+``` bash
+--mode censor
+```
+
+## detect
+
+-   Erkennt Gesichter oder Augen im Bild
+-   Gibt nur die **Koordinaten der Detektionen** aus
+-   Bild wird **nicht verändert**
+
+Beispiel:
+
+``` bash
+python -m cli.main foto.jpg --mode detect
+```
+
+------------------------------------------------------------------------
+
+## censor
+
+-   Erkennt automatisch das passende Objekt
+-   Wendet Zensur auf das Bild an
+-   Speichert das Ergebnis als neue Datei
+
+Beispiel:
+
+``` bash
+python -m cli.main foto.jpg --mode censor
+```
+
+------------------------------------------------------------------------
+
+# Censor Parameter
+
+``` bash
+--censor pixel
+--censor blur
+--censor eyeBar
+```
+
+Option     Beschreibung
+  ---------- ---------------------------------
+`pixel`    Pixelisiert das Gesicht
+`blur`     Verwischt das Gesicht
+`eyeBar`   Schwarzer Balken über den Augen
+
+Standardwert:
+
+    pixel
+
+------------------------------------------------------------------------
+
+# Automatische Subject Auswahl
+
+Die CLI wählt automatisch das **optimale Detektionsziel** basierend auf
+dem Zensurmodus.
+
+Zensurmodus   Detektiertes Objekt
+  ------------- ---------------------
+`pixel`       Gesicht
+`blur`        Gesicht
+`eyeBar`      Augen
+
+------------------------------------------------------------------------
+
+# Output Parameter
+
+``` bash
+--output ORDNER
+```
+
+Optionaler Ordner für die Ausgabe.
+
+Beispiel:
+
+``` bash
+python -m cli.main foto.jpg --mode censor --output ./results
+```
+
+Wenn kein Output angegeben wird:
+
+-   Bild wird im **gleichen Ordner wie das Inputbild** gespeichert.
+
+------------------------------------------------------------------------
+
+# Mehrere Bilder verarbeiten
+
+Die CLI kann ganze Ordner automatisch verarbeiten.
+
+Beispiel:
+
+``` bash
+python -m cli.main ./bilder --mode censor --censor pixel
+```
+
