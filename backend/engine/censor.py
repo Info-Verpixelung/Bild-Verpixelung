@@ -79,6 +79,22 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 7,
                         mean_color = np.mean(patch, axis=(0,1))
                         output[box_up:box_down, box_left:box_right] = mean_color
 
+            '''
+            Für ein verbesserten gaussian blur:
+            
+            (nicht aktiv implementiert, da build sonst nicht funktioniert)
+            
+            "conda install scipy" im cmd
+            
+            und import oben hinzufügen
+            
+            region = output[box_up:box_down, box_left:box_right].astype(np.float32)  
+            # Apply Gaussian blur to each color channel separately  
+            for c in range(3):  # R, G, B channels  
+                region[:,:,c] = gaussian_filter(region[:,:,c], sigma=10) #häherer sigmaa Wert -> Stärkerer Blur  
+            output[box_up:box_down, box_left:box_right] = region.astype(np.uint8)
+            '''
+
     else:
         for eyePair in boxes: # eyePair ist nicht wie bei der Verpixelung eine box, sondern eine Liste aus zwei boxen (zwei Augen). Die erste Box ist das linkere Auge.
             # Liste von allen Ecken des linken und rechten Auges, beginnend in der oberen linken Ecke, im Uhrzeigersinn
