@@ -4,7 +4,6 @@ from PIL import Image
 import io
 import numpy as np
 import math
-from scipy.ndimage import gaussian_filter
 
 def rotated_rect_points(cx, cy, width, height, angle):
                 c = math.cos(angle)
@@ -69,12 +68,16 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 7,
 
                         # Mittelwert allen Pixeln im Block zuweisen => überschreiben aller Pixel im Block
                         output[y:y+height_block_pix, x:x+width_block_pix] = mean_color
-            elif mode == 'blur': #Aus Zeitmangel konnten wir diesen algorithmus nicht mehr selber implementieren, dahingehend wird dieser importiert (scipy)
-                region = output[box_up:box_down, box_left:box_right].astype(np.float32)
-                # Apply Gaussian blur to each color channel separately
-                for c in range(3):  # R, G, B channels
-                    region[:,:,c] = gaussian_filter(region[:,:,c], sigma=10) #häherer sigmaa Wert -> Stärkerer Blur
-                output[box_up:box_down, box_left:box_right] = region.astype(np.uint8)
+            elif mode == 'blur': #Aus Zeitmangel konnten wir diesen algorithmus nicht mehr selber implementieren, dahingehend ki-generitert und sehr simpel
+                patch = output[box_up:box_down, box_left:box_right]
+                if patch.size > 0:
+                    # Handle both grayscale (2D) and color (3D) images
+                    if len(patch.shape) == 2:  # grayscale
+                        mean_val = np.mean(patch)
+                        output[box_up:box_down, box_left:box_right] = mean_val
+                    else:  # color (H,W,3)
+                        mean_color = np.mean(patch, axis=(0,1))
+                        output[box_up:box_down, box_left:box_right] = mean_color
 
     else:
         for eyePair in boxes: # eyePair ist nicht wie bei der Verpixelung eine box, sondern eine Liste aus zwei boxen (zwei Augen). Die erste Box ist das linkere Auge.
