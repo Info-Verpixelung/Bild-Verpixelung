@@ -1,4 +1,3 @@
-# backend/cli/main.py - AUTO SUBJECT SELECTION
 import argparse
 import os
 from typing import List, Dict, Tuple
@@ -7,12 +6,13 @@ from engine.censor import censor
 from engine.image_adapter import piltonp, nptopil
 from PIL import Image
 
+#Umformatierung vom Dict zu Tuplen. Diese Methode wird hier implementiert, da das Konvertieren bei Verwendung des Frontends vom Frontend übernommen wird, auf dieses in diesem Fall kein Zugriff ist.
 def dicts_to_censor_tuples(boxes: List[Dict]) -> List[Tuple[int, int, int, int]]:
-    """Convert detector dicts → censor tuples (x,y,half_w,half_h)"""
+    """Konvertieren: detector dicts → censor tuples (x,y,half_w,half_h)"""
     return [(box['x'], box['y'], box['w']//2, box['h']//2) for box in boxes]
 
 def group_eyes_into_pairs(eye_boxes: List[Tuple[int, int, int, int]]) -> List[List[Tuple[int, int, int, int]]]:
-    """Group left/right eyes into pairs for eyeBar mode"""
+    """Augenpaare gruppieren für Balkne-Zensur"""
     if len(eye_boxes) % 2 != 0:
         print(f"Warning: {len(eye_boxes)} eyes (odd number) - ignoring last eye")
         eye_boxes = eye_boxes[:-1]
@@ -25,13 +25,13 @@ def group_eyes_into_pairs(eye_boxes: List[Tuple[int, int, int, int]]) -> List[Li
     return pairs
 
 def auto_select_subject(censor_mode: str) -> str:
-    """Automatically choose optimal subject based on censor mode"""
+    """Merkmal (Gesicht oder Augen) je nach Zensur-Modus bestimmen"""
     if censor_mode == "eyeBar":
         return "eyes"
     return "face"  # pixel/blur → faces
 
 def process_image(filepath: str, mode: str, censor_mode: str, output_dir: str | None = None):
-    # AUTO SELECT SUBJECT 🎯
+    #Merkmal automatisch wählen
     subject = auto_select_subject(censor_mode)
     #print(f"Auto-selected subject: {subject} for mode: {censor_mode}")
 
@@ -40,12 +40,14 @@ def process_image(filepath: str, mode: str, censor_mode: str, output_dir: str | 
 
     detections = detect(np_img, subject)
 
+    #detect mode (gibt boxen zurück
     if mode == "detect":
         print(f"Detected {len(detections)} {subject} in {filepath}:")
         for d in detections:
             print(d)
         return
 
+    #censor mode (gibt zensierte Bilder zurück)
     if mode == "censor":
         if censor_mode == "eyeBar":
             eye_tuples = dicts_to_censor_tuples(detections)
@@ -63,12 +65,12 @@ def process_image(filepath: str, mode: str, censor_mode: str, output_dir: str | 
         print(f"Censored image saved: {outpath}")
 
 def main():
+    #parser für Befehl-Aufbau
     parser = argparse.ArgumentParser(description="Smart Face/Eye detection & censor CLI")
     parser.add_argument("input", help="Image file or folder")
     parser.add_argument("--mode", choices=["detect", "censor"], default="detect")
     parser.add_argument("--censor", choices=["pixel", "blur", "eyeBar"], default="pixel")
     parser.add_argument("--output", help="Output directory")
-    # --subject REMOVED - now automatic! 🎉
 
     args = parser.parse_args()
 

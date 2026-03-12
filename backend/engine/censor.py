@@ -135,6 +135,10 @@ def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10
             
             height = height*2 # weil die rectangle funktion die height selbst halbiert
 
+            #Größe der Balken hiermit noch mal anpassen
+            width *= 1.8
+            height *= 1.5
+
             # 5. Rechtecks-koordinaten berechnen
             rect = rotated_rect_points(rectCenter[0], rectCenter[1], width, height, rectAngle)
 

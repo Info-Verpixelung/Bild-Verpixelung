@@ -1,122 +1,178 @@
-Here’s your improved **README.md** file.  
-I’ve standardized formatting, made commands displayed in proper fenced blocks, fixed typos, improved clarity and flow, and added a more consistent heading structure.
 
-***
+# Bild-Verpixelung
+---
 
-```markdown
-# Programm starten (Frontend und Backend parallel)  
-*Stand: 18.02.2026*
+Eine Anwendung zur automatischen Zensur / Anonymisierung von Gesichtern.
+
+# Inhaltsverzeichnis
+
+- [Bild-Verpixelung](#bild-verpixelung)
+- [Zweck der Anwendung](#zweck-der-anwendung)
+- [Verwendete Technologien](#verwendete-technologien)
+
+- [Starten über die Kommandozeile](#starten-über-die-kommandozeile)
+    - [Windows](#windows)
+        - [Einmalige Einrichtung](#einmalige-einrichtung)
+            - [Miniconda installieren](#miniconda-installieren)
+            - [Environment erstellen](#environment-erstellen)
+        - [Programm ausführen](#programm-ausführen)
+    - [macOS / Linux](#macos--linux)
+        - [Einmalige Einrichtung](#einmalige-einrichtung-1)
+            - [Miniconda installieren](#miniconda-installieren-1)
+            - [Environment erstellen](#environment-erstellen-1)
+        - [Programm ausführen](#programm-ausführen-1)
+
+- [Starten über das Executable](#starten-über-das-executable)
+
+- [CLI-Anwendung — Bildanalyse & Zensur](#cli-anwendung--bildanalyse--zensur)
+    - [CLI ausführen](#cli-ausführen)
+    - [Command-Struktur](#command-struktur)
+    - [Parameter im Detail](#parameter-im-detail)
+        - [INPUT](#input)
+    - [Mode-Parameter](#mode-parameter)
+        - [detect](#detect)
+        - [censor](#censor)
+    - [Censor-Parameter](#censor-parameter)
+    - [Automatische Objektauswahl](#automatische-objektauswahl)
+    - [Output-Parameter](#output-parameter)
+    - [Mehrere Bilder verarbeiten](#mehrere-bilder-verarbeiten)
 
 ---
 
-## Über die Kommandozeile
+# Zweck der Anwendung
 
-### Windows
+Es kann verschiedene Gründe haben, warum man Gesichter in Fotos zensieren will, für diese wurde diese Anwendung konzipiert.
+Vor allem für Bilder von Demonstrationen oder Veranstaltungen kann das Programm von Vorteil sein, da gerade hier es häufig erwünscht ist, das Teilnehmer anonym bleiben und das Zensieren von Gesichtern bei großen Gruppen aufwändig sein kann.
 
-#### Einmalige Einrichtung
 
-##### Miniconda installieren
-1. Lade Miniconda von der offiziellen Seite herunter:  
+# Verwendete Technologien
+
+- Backend: Python mit Flask
+- Frontend: HTML, CSS, JS
+- API zur Gesichtserkennung: [face_recognition](https://github.com/ageitgey/face_recognition)
+- Dependencies: Sichtbar in der environment files, diese werden über miniconda konfiguriert (Siehe [Starten über die Kommandozeile](#über-die-kommandozeile))
+
+
+
+# Starten über die Kommandozeile
+
+## Windows
+
+### Einmalige Einrichtung
+
+#### Miniconda installieren
+
+1. Miniconda von der offiziellen Seite herunterladen:  
    [https://www.anaconda.com/docs/getting-started/miniconda/main](https://www.anaconda.com/docs/getting-started/miniconda/main)
-2. Öffne ein Terminal und navigiere in den **backend**-Ordner des Projekts:
+2. Öffne das Terminal und navigiere in den **backend**-Ordner des Projekts:
    ```bash
    cd path\to\project\backend
    ```
-3. Führe die Initialisierung aus:
+3. Initialisierung ausführen:
    ```bash
    conda init
    ```
-4. Schließe das Terminal, öffne es erneut und navigiere wieder in den **backend**-Ordner.
-5. Überprüfe die Installation:
+4. Terminal schließen und wieder öffnen, anschließend wieder in den **backend**-Ordner navigieren.
+5. Installation überprüfen:
    ```bash
    conda --version
    ```
    Wenn eine Versionsnummer zurückgegeben wird, war die Installation erfolgreich.
 
-##### Environment erstellen
+#### Environment erstellen
 1. Erstelle das Environment:
    ```bash
    conda env create -f environment-windows.yml
    ```
-2. Überprüfe, ob es erstellt wurde:
+2. Überprüfen, ob es erstellt wurde:
    ```bash
    conda env list
    ```
    Das Environment **bildverpixelung** sollte nun aufgelistet sein.
 
-#### Programm ausführen
-1. Navigiere in den **backend**-Ordner:
+
+
+### Programm ausführen
+1. Inn den **backend**-Ordner navigieren:
    ```bash
    cd path\to\project\backend
    ```
-2. Aktiviere das Environment:
+2. Environment aktivieren:
    ```bash
    conda activate bildverpixelung
    ```
-   Du erkennst die Aktivierung an der Anzeige `(bildverpixelung)` vor dem Pfad im Terminal.
-3. Starte das Backend:
+   Die Aktivierung erkennt man an der Anzeige `(bildverpixelung)` vor dem Pfad im Terminal:
+   ```bash
+   (bildverpixelung) C:\Users\...\Verpixelung\backend>
+   ```
+
+3. Programm ausführen:
    ```bash
    python -m api.app
    ```
 
----
 
-### macOS / Linux
 
-#### Einmalige Einrichtung
 
-##### Miniconda installieren
+## macOS / Linux
+
+### Einmalige Einrichtung
+
+#### Miniconda installieren
+
 1. Installiere Miniconda entweder über den offiziellen Installer:  
    [https://www.anaconda.com/docs/getting-started/miniconda/main](https://www.anaconda.com/docs/getting-started/miniconda/main)  
    oder – falls **Homebrew** installiert ist (empfohlen) – über:
    ```bash
    brew install --cask miniconda
    ```
-2. Öffne ein Terminal und navigiere in den **backend**-Ordner:
+2. Öffne das Terminal und navigiere in den **backend**-Ordner des Projekts:
    ```bash
    cd path/to/project/backend
    ```
-3. Führe die Initialisierung aus:
+3. Initialisierung ausführen:
    ```bash
    conda init zsh
    ```
-4. Schließe das Terminal, öffne es erneut und navigiere wieder in den **backend**-Ordner.
-5. Überprüfe die Installation:
+4. Terminal schließen und wieder öffnen, anschließend wieder in den **backend**-Ordner navigieren.
+5. Installation überprüfen:
    ```bash
    conda --version
    ```
    Wenn eine Versionsnummer zurückgegeben wird, war die Installation erfolgreich.
 
-##### Environment erstellen
+#### Environment erstellen
 1. Erstelle das Environment:
    ```bash
    conda env create -f environment-mac.yml
    ```
-2. Überprüfe die Installation:
+2. Überprüfen, ob es erstellt wurde:
    ```bash
    conda env list
    ```
    Das Environment **bildverpixelung** sollte nun aufgelistet sein.
 
-#### Programm ausführen
-1. Navigiere in den **backend**-Ordner:
+
+
+### Programm ausführen
+1. In den **backend**-Ordner navigieren:
    ```bash
    cd path/to/project/backend
    ```
-2. Aktiviere das Environment:
+2. Environment aktivieren:
    ```bash
    conda activate bildverpixelung
    ```
-3. Starte das Backend:
+3. Programm ausführen:
    ```bash
    python -m api.app
    ```
-
+   
 ---
 
-## Über das Executable
 
-- Lade das passende Executable für dein Betriebssystem herunter.
+# Starten über das Executable
+-  Lade das passende Executable für dein Betriebssystem herunter.
 - Falls das System die Ausführung blockiert:
     - **macOS:** Öffne das Programm einmal, gehe in *Systemeinstellungen → Datenschutz & Sicherheit* und klicke bei der Meldung auf **"Trotzdem öffnen"**.
 - Das Programm startet automatisch, das Frontend öffnet sich im Browser.
@@ -124,12 +180,15 @@ I’ve standardized formatting, made commands displayed in proper fenced blocks,
 ---
 
 ## CLI-Anwendung — Bildanalyse & Zensur
+Die Anwendung lässt sich auch vollständig als Kommandozeilenanwendung (CLI) verwenden, hierbei werden sowohl einzelne Datein als auch Ordner unterstützt.
 
-Mit der Kommandozeilenanwendung (CLI) können Bilder automatisch auf **Gesichter oder Augen** analysiert und bei Bedarf **zensiert** werden (Pixel, Blur oder Eye-Bar).
-
-Unterstützt werden **einzelne Bilder** oder **ganze Ordner**.
 
 ---
+
+Um das CLI verwenden zu können muss vorher Miniconda eingerichtet werden, hierfür siehe:
+- Windows: [Einmalige Einrichtung](#einmalige-einrichtung)
+- macOS / Linux: [Einmalige Einrichtung](#einmalige-einrichtung-1)
+
 
 ## CLI ausführen
 
@@ -139,16 +198,10 @@ Navigiere im Terminal in den `backend`-Ordner und aktiviere das Environment:
 conda activate bildverpixelung
 ```
 
-Starte dann die CLI:
-
+Nun können Befehle in der vorgegebenen Struktur ausgeführt werden um die Anwendung zu benutzen.
+Die grundlegende Struktur ist hierbei:
 ```bash
-python -m cli.main <input> [OPTIONEN]
-```
-
-### Beispiel
-
-```bash
-python -m cli.main image.jpg --mode censor --censor blur
+python -m cli.main <input> [Parameter]
 ```
 
 ---
@@ -177,12 +230,12 @@ Unterstützte Formate: `.png`, `.jpg`, `.jpeg`, `.webp`
 
 **Beispiel (ein Bild)**
 ```bash
-python -m cli.main foto.jpg
+python -m cli.main foto.jpg [Parameter]
 ```
 
 **Beispiel (ganzer Ordner)**
 ```bash
-python -m cli.main ./bilder
+python -m cli.main ./bilder [Parameter]
 ```
 
 Alle Bilder im Ordner werden automatisch verarbeitet.
@@ -207,7 +260,7 @@ oder
 
 **Beispiel:**
 ```bash
-python -m cli.main foto.jpg --mode detect
+python -m cli.main foto.jpg --mode detect [Parameter]
 ```
 
 ---
@@ -220,7 +273,7 @@ python -m cli.main foto.jpg --mode detect
 
 **Beispiel:**
 ```bash
-python -m cli.main foto.jpg --mode censor
+python -m cli.main foto.jpg --mode censor [Parameter]
 ```
 
 ---
@@ -233,10 +286,10 @@ python -m cli.main foto.jpg --mode censor
 --censor eyeBar
 ```
 
-| Option    | Beschreibung                   |
-|------------|--------------------------------|
-| `pixel`    | Pixelisiert das Gesicht        |
-| `blur`     | Verwischt das Gesicht          |
+| Option    | Beschreibung                                   |
+|------------|------------------------------------------------|
+| `pixel`    | Verpixelung des Gesichts                       |
+| `blur`     | Verwischen des Gesichts                        |
 | `eyeBar`   | Fügt einen schwarzen Balken über die Augen ein |
 
 **Standard:** `pixel`
@@ -280,33 +333,3 @@ Die CLI kann ganze Ordner automatisch verarbeiten.
 ```bash
 python -m cli.main ./bilder --mode censor --censor pixel
 ```
-```
-
-***
-
-### Änderungen vorgenommen:
-1. **Konsistente Formatierung mit Markdown:**
-   - Alle Befehle in Code-Blöcke (` ```bash ... ``` `) gesetzt.
-   - Tabellen klar formatiert.
-   - Einheitliche Typografie für Pfade, Parameter und Dateinamen.
-
-2. **Strukturverbesserung:**
-   - Einheitliche Überschriften-Hierarchie.
-   - Bessere Lesbarkeit durch klare Abschnittstrennung mit `---`.
-
-3. **Sprachliche Korrekturen:**
-   - Rechtschreibfehler korrigiert („ausfühhren“ → „ausführen“, „on“ → „ob“, „Dateipfdas“ → „Dateipfad“ etc.).
-   - Leicht vereinfachte Sätze für bessere Verständlichkeit.
-
-4. **Konsistenz:**
-   - “backend”-Ordner überall konsequent klein geschrieben.
-   - Einheitliche Befehlsfolge und Abschnittsaufbau für Windows/macOS/Linux.
-
-5. **Allgemeine Lesbarkeit:**
-   - Beispiele hervorgehoben.
-   - Klarere Erklärung, wann der Benutzer das Terminal schließen/öffnen muss.
-   - Markdown-Tabellen für CLI-Parameter eingefügt.
-
-***
-
-Möchtest du, dass ich auch noch ein **kurzes Inhaltsverzeichnis (Table of Contents)** am Anfang hinzufüge? Das könnte beim Navigieren helfen.
