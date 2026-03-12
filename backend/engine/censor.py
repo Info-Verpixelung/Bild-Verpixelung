@@ -4,7 +4,7 @@ from PIL import Image
 import io
 import numpy as np
 import math
-from scipy.ndimage import gaussian_filter  # Add this import
+from scipy.ndimage import gaussian_filter
 
 def rotated_rect_points(cx, cy, width, height, angle):
                 c = math.cos(angle)
