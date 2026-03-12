@@ -1,4 +1,3 @@
-# backend/engine/imageadapter.py
 # definiert Methoden, wie PILs in NumPy arrays umgewandelt werden können und anders herum
 import numpy as np
 from PIL import Image

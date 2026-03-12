@@ -1,6 +1,4 @@
 # Startmechanismus der Web-App. Kommunikation Frontend- Backend. 
-
-# Importe 
 from flask import Flask, render_template
 from flask_cors import CORS
 from api.routes import detect_handler, censor_handler # Import der nötigen Methoden von Routes.py
@@ -10,24 +8,24 @@ import time
 import os
 import sys
 
-# Handling von PyInstaller temp folder (sicherstellen, dass Dateipfade funktionieren, egal ob das Programm compliiert ist oder nicht)
+#Handling von PyInstaller temp folder (sicherstellen, dass Dateipfade funktionieren, egal ob das Programm compliiert ist oder nicht)
 if getattr(sys, 'frozen', False):
     base_path = sys._MEIPASS
 else:
     base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-# Definiert, wo FLASK die nötigen Dateien findet, um die Webseite laufen zu lassen
+#Definiert, wo FLASK die nötigen Dateien findet, um die Webseite laufen zu lassen
 template_folder = os.path.join(base_path, "templates")  # HTML- page
 static_folder = os.path.join(base_path, "static")       # für Funktion der Website notwendiger Rest (Bilder, java script...)
 
-# Initialisiert den Web Server
+#Initialisiert den Web Server
 app = Flask(
     __name__,
     template_folder=template_folder,
     static_folder=static_folder
 )
 
-# Erlaubt Cross-Origin- Requests (Website, die auf einen anderen server zugreift) 
+#Erlaubt Cross-Origin- Requests (Website, die auf einen anderen server zugreift)
 CORS(app)
 
 #Laden des html Dokumentes beim Öffnen der Seite

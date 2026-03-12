@@ -1,6 +1,7 @@
 """
-Data models for the face censoring API.
-Used for validation, documentation, and type hints.
+Data Modelle für die API
+Genutzt für Validation und Kommunikation
+Größtenteils KI genierert
 """
 
 from typing import List, Dict, Any
