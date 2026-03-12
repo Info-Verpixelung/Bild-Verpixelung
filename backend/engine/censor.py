@@ -28,7 +28,7 @@ def rotated_rect_points(cx, cy, width, height, angle):
             
 
 
-def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 10, num_pixelation_y = 10) -> np.ndarray:
+def censor(image: np.ndarray, boxes: list, mode = 'pixel', num_pixelation_x = 7, num_pixelation_y = 7) -> np.ndarray:
     """returns censored image given to the function according to the given boxes
 
     Args:
